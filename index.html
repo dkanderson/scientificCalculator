@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="">
+</head>
+
+<body>
+
+  <!-- Add your site or application content here -->
+   <section id="scientific-calculator">
+    <header class="screen">
+        <output id="calculator-screen" aria-label="Calculator Screen">0</output>
+    </header>
+    <section class="buttons">
+        <div class="extended">
+            <div class="row">
+                <button class="special-function" data-function="left-bracket">&#40;</button>
+                <button class="special-function" data-function="right-bracket">&#41;</button>
+                <button class="special-function" data-function="memory-cancel">mc</button>
+                <button class="special-function" data-function="memory-plus">m&#43;</button>
+                <button class="special-function" data-function="memory-minus">m&minus;</button>
+                <button class="special-function" data-function="memory-recall">mr</button>
+            </div>
+            <div class="row">
+                <button class="special-function" data-function="second-toggle">2<sup>nd</sup></button>
+                <button class="special-function" data-function="x-squared">x<sup>2</sup></button>
+                <button class="special-function" data-function="x-cubed">x<sup>3</sup></button>
+                <button class="special-function" data-function="x-to-the-y">x<sup>y</sup></button>
+                <button class="special-function" data-function="e-to-the-x">e<sup>x</sup></button>
+                <button class="special-function" data-function="ten-to-the-x">10<sup>x</sup></button>
+            </div>
+            <div class="row">
+                <button class="special-function" data-function="one-over-x">1/x</button>
+                <button class="special-function" data-function="square-root">sqrt</button>
+                <button class="special-function" data-function="cube-root">cbrt</button>
+                <button class="special-function" data-function="yx-root">yxrt</button>
+                <button class="special-function" data-function="ln">ln</button>
+                <button class="special-function" data-function="log-ten">log<sub>10</sub></button>
+            </div>
+            <div class="row">
+                <button class="special-function" data-function="factorial">x!</button>
+                <button class="special-function" data-function="sine">sin</button>
+                <button class="special-function" data-function="cosine">cos</button>
+                <button class="special-function" data-function="tangent">tan</button>
+                <button class="special-function" data-function="e">e</button>
+                <button class="special-function" data-function="EE">EE</button>
+            </div>
+            <div class="row">
+                <button class="special-function" data-function="rad">rad</button>
+                <button class="special-function" data-function="sine-h">sinh</button>
+                <button class="special-function" data-function="cosine-h">cosh</button>
+                <button class="special-function" data-function="tangent-h">tanh</button>
+                <button class="special-function" data-function="pi">&pi;</button>
+                <button class="special-function" data-function="random">rand</button>
+            </div>
+        </div>
+        <div class="compact">
+            <div class="row">
+                <button class="simple-functions" data-function="cancel">AC</button>
+                <button class="simple-functions" data-function="pos-neg">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" id="plusminus" x="0px" y="0px" width="15px" height="40px" viewBox="0 0 120 120" /*style={enable-background: new 0 0 15 20;}*/ xmlSpace="preserve" data-pm="plusmn">
+                        <g>
+                        <g>
+                            <path d="M77.955,109.975c-4.037,0-7.309,3.271-7.309,7.308c0,4.037,3.272,7.31,7.309,7.31h56.029c4.037,0,7.309-3.271,7.309-7.31    c0-4.036-3.271-7.308-7.309-7.308H77.955z"></path>
+                            <path d="M0,44.2c0,4.037,3.272,7.308,7.309,7.308h19.489v19.49c0,4.036,3.271,7.309,7.308,7.309c4.037,0,7.309-3.271,7.309-7.309    v-19.49H63.34c4.037,0,7.308-3.271,7.308-7.308c0-4.037-3.271-7.309-7.308-7.309H41.414V12.53c0-4.037-3.272-7.308-7.309-7.308    c-4.037,0-7.308,3.271-7.308,7.308v24.361H7.308C3.272,36.892,0,40.164,0,44.2z"></path>
+                        <path d="M131.428,17.261c-2.854-2.855-7.481-2.855-10.336,0L14.763,123.594c-2.853,2.854-2.853,7.481,0,10.334    c1.425,1.429,3.298,2.143,5.167,2.143c1.868,0,3.742-0.714,5.169-2.143L131.428,27.599    C134.283,24.746,134.283,20.114,131.428,17.261z"></path>
+                        </g>
+                        </g>
+                    </svg>
+                </button>
+                <button class="simple-functions" data-function="percentage">&#37;</button>
+                <button class="basic-operator" data-operator="divide">&divide;</button>
+            </div>
+            <div class="row">
+                <button class="numbers" data-number="1">1</button>
+                <button class="numbers" data-number="2">2</button>
+                <button class="numbers" data-number="3">3</button>
+                <button class="basic-operator" data-operator="multiply">&times;</button>
+            </div>
+            <div class="row">
+                <button class="numbers" data-number="4">4</button>
+                <button class="numbers" data-number="5">5</button>
+                <button class="numbers" data-number="6">6</button>
+                <button class="basic-operator" data-operator="subtract">&minus;</button>
+            </div>
+            <div class="row">
+                <button class="numbers" data-number="7">7</button>
+                <button class="numbers" data-number="8">8</button>
+                <button class="numbers" data-number="9">9</button>
+                <button class="basic-operator" data-operator="plus">&#43;</button>
+            </div>
+            <div class="row">
+                <button class="numbers" data-toggle="false"></button>
+                <button class="numbers" data-number="0">0</button>
+                <button class="numbers" data-decimal="point">.</button>
+                <button class="basic-operator" data-operator="equals">&#61;</button>
+            </div>
+        </div>
+    </section>
+   </section>
+  
+  <script src="js/script.js"></script>
+
+</body>
+
+</html>
