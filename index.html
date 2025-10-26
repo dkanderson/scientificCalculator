@@ -5,16 +5,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title></title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/styles.css">
   <meta name="description" content="">
 </head>
 
 <body>
 
   <!-- Add your site or application content here -->
-   <section id="scientific-calculator">
+   <section id="scientific-calculator" class="scientific-calculator">
     <header class="screen">
-        <output id="calculator-screen" aria-label="Calculator Screen">0</output>
+        <output id="display-text" class="display-text" aria-label="Calculator Screen">0</output>
     </header>
     <section class="buttons">
         <div class="extended">
@@ -61,8 +61,8 @@
         </div>
         <div class="compact">
             <div class="row">
-                <button class="simple-functions" data-function="cancel">AC</button>
-                <button class="simple-functions" data-function="pos-neg">
+                <button class="simple-function" data-function="cancel">AC</button>
+                <button class="simple-function" data-function="pos-neg">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" id="plusminus" x="0px" y="0px" width="15px" height="40px" viewBox="0 0 120 120" /*style={enable-background: new 0 0 15 20;}*/ xmlSpace="preserve" data-pm="plusmn">
                         <g>
                         <g>
@@ -73,7 +73,7 @@
                         </g>
                     </svg>
                 </button>
-                <button class="simple-functions" data-function="percentage">&#37;</button>
+                <button class="simple-function" data-function="percentage">&#37;</button>
                 <button class="basic-operator" data-operator="divide">&divide;</button>
             </div>
             <div class="row">
