@@ -6,14 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title></title>
   <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="js/script.js"></script>
+    <!-- <script type="module" src="js/helpers/calculate.js"></script> -->
   <meta name="description" content="">
 </head>
 
 <body>
 
   <!-- Add your site or application content here -->
-   <section id="scientific-calculator" class="scientific-calculator">
+   <section id="scientific-calculator" class="scientific-calculator simple">
     <header class="screen">
+        <span id="expression" class="expression"></span>
         <output id="display-text" class="display-text" aria-label="Calculator Screen">0</output>
     </header>
     <section class="buttons">
@@ -77,34 +80,34 @@
                 <button class="basic-operator" data-operator="divide">&divide;</button>
             </div>
             <div class="row">
-                <button class="numbers" data-number="1">1</button>
-                <button class="numbers" data-number="2">2</button>
-                <button class="numbers" data-number="3">3</button>
+                <button class="number" data-number="1">1</button>
+                <button class="number" data-number="2">2</button>
+                <button class="number" data-number="3">3</button>
                 <button class="basic-operator" data-operator="multiply">&times;</button>
             </div>
             <div class="row">
-                <button class="numbers" data-number="4">4</button>
-                <button class="numbers" data-number="5">5</button>
-                <button class="numbers" data-number="6">6</button>
+                <button class="number" data-number="4">4</button>
+                <button class="number" data-number="5">5</button>
+                <button class="number" data-number="6">6</button>
                 <button class="basic-operator" data-operator="subtract">&minus;</button>
             </div>
             <div class="row">
-                <button class="numbers" data-number="7">7</button>
-                <button class="numbers" data-number="8">8</button>
-                <button class="numbers" data-number="9">9</button>
+                <button class="number" data-number="7">7</button>
+                <button class="number" data-number="8">8</button>
+                <button class="number" data-number="9">9</button>
                 <button class="basic-operator" data-operator="plus">&#43;</button>
             </div>
             <div class="row">
-                <button class="numbers" data-toggle="false"></button>
-                <button class="numbers" data-number="0">0</button>
-                <button class="numbers" data-decimal="point">.</button>
+                <button id="simple-toggle" class="toggle" data-toggle="false"><></button>
+                <button class="number" data-number="0">0</button>
+                <button class="decimal" data-decimal="point">.</button>
                 <button class="basic-operator" data-operator="equals">&#61;</button>
             </div>
         </div>
     </section>
    </section>
   
-  <script src="js/script.js"></script>
+
 
 </body>
 

@@ -14,12 +14,23 @@ body{
     border-radius: 7px;
     border: 1px solid rgba(0, 0, 0, 0.35);
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
-}
+    }
 
 .buttons{
     display: grid;
     grid-template-columns: 1fr 240px;
     column-gap: 0px;
+    transition: all 0.6s ease;
+    -webkit-transition: all 0.6s ease;
+    -o-transition: all 0.6s ease;
+}
+
+
+.simple .buttons{
+    grid-template-columns: auto;
+     transition: all 0.6s ease;
+    -webkit-transition: all 0.6s ease;
+    -o-transition: all 0.6s ease;
 }
 
 .buttons button {
@@ -33,6 +44,7 @@ body{
     text-align: center;
     font-family: 'Work Sans', helvetica, sans-serif;
     font-size: 1.2em;
+    cursor:pointer;
     color: #eee;
     font-weight: 300;
     height: 40px;
@@ -53,6 +65,10 @@ body{
 
 .compact, .extended{
     display: grid;
+}
+
+.simple .extended{
+    display: none;
 }
 
 .row{
@@ -86,6 +102,20 @@ body{
     color: #fff;
     font-weight: 100;
     text-align: right;
+    overflow: hidden;
+}
+
+.simple .display-text{
+    font-size: 1.5em;
+}
+
+.expression{
+    display: block;
+    color:#ccc;
+    font-size: 1em;
+    position: absolute;
+    right: 3px;
+    bottom: 2.7em;
 }
 
 @keyframes colors {
@@ -109,6 +139,10 @@ body{
         display: grid;
         grid-template-columns: 1fr;
         column-gap: 0px;
+    }
+
+    .simple .compact{
+        min-width: 240px;
     }
 
     .buttons .compact button{
