@@ -14,7 +14,9 @@ import calculate from "./helpers/calculate.js";
         expression: [],
         inputStop: false,
         deceimalFlag: false,
-        operatorOnce: false
+        operatorOnce: false,
+        negativeFlag: false,
+        equated: false
     }
 
 
@@ -31,11 +33,33 @@ import calculate from "./helpers/calculate.js";
     function handleClick(className, button){
         switch(true){
             case className === "number":
+                
+                if(State.equated){
+                    // reset
+                    State.cache = [];
+                    State.expression = [];
+                    State.operator = [];
+                    State.numCache = [];
+                    State.equated = false;
+                    updateScreen("");
+                    updateScreen("", true);
+                }
+
+                if(State.negativeFlag){
+                    State.negativeFlag = false;                     // set negative flag to false ( next number has not been negated)
+                    State.operator.push("multiply");                // add a "multiply" operator to the operators array
+                    State.numCache.push(parseFloat(State.cache.join("")));      // update number cache with the last negated number
+                    State.cache = [];                               // clear cache
+                    State.expression.push(operatorSymbol("multiply"));          // convert operator to easily understood symbol and add it to the expression array
+                    updateScreen(State.expression.join(""));        // update screen with multiply symbol
+                }
+
                 const num = button.getAttribute("data-number");     // get the number associated with the button from the data attribute
                 State.operatorOnce = false;                         // reset operator once flag ( makes sure there are no duplicate operators)
                 State.cache.push(num);                              // store each number into an array
                 State.expression.push(num);                         // store each number into the expression array
                 updateScreen(State.expression.join(""));            // update the screen with the full expression
+               console.log(State.expression, State.cache);
                 break;
 
             case className === "simple-function":
@@ -55,6 +79,30 @@ import calculate from "./helpers/calculate.js";
                         updateScreen("", true);
                         break;
                     case "pos-neg":
+                        if(State.expression.length && !State.negativeFlag){             // --if there is an expression and no negative flag has been set
+                            const pos = State.expression.length - State.cache.length;   // calculate offset position in the array to insert bracket and neg symbol
+                            State.cache.unshift("-");                                   // add neg symbol to the cache
+                            
+                            State.expression.splice(pos, 0, ("(-"));                    // surround last operand with parenthesis and a negative symbol (front)
+                            State.expression.push(")");                                 // (back)
+                            updateScreen(State.expression.join(""));                    // update screen with the changes 
+                            State.negativeFlag = true;                                  // set the negative flag to true (a number has been negated)
+                            console.log(State.cache);
+                        } else
+
+                        if(State.expression.length && State.negativeFlag){              // --if there is an expression and the negative flag has been set
+                            const pos = State.expression.length - ( State.cache.length + 1);    // calculate the offset position of the parenthesis for removal
+                            State.cache.shift();                                        // remove negative symbol from the cache
+
+                            State.expression.splice(pos, 1);                            // remove left bracket and neg from expression array
+                            State.expression.pop();                                     // remove right bracket from expression array
+                            updateScreen(State.expression.join(""));                    // update screen with changes
+                            State.negativeFlag = false;                                 // set the negative flag to false
+
+                            console.log("Expression: ", State.expression);
+                            console.log("Cache: ", State.cache)
+                        }
+                        
                         console.log("pos-neg");
                         break;
                     case "percentage":
@@ -76,7 +124,7 @@ import calculate from "./helpers/calculate.js";
 
                 const op =  button.getAttribute("data-operator");   //get the operator type from the data attribute of the button
 
-                if(!State.numCache.length){                         //make sure zero (0) is the default number on expressions
+                if(!State.cache.length){                         //make sure zero (0) is the default number on expressions
                     State.cache.push("0");
                     State.expression.push("0");
                 }
@@ -98,7 +146,7 @@ import calculate from "./helpers/calculate.js";
                     State.operator = [];
                     State.cache = [];
 
-                    
+                    State.equated = true;
                     State.cache.push(result.toString());            // update cache with the result
                     updateScreen(State.expression.join(""), true);  // move the expression to secondary display above and
                     updateScreen(result);                           // display the result of the expression below
