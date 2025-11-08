@@ -109,14 +109,20 @@ body{
     font-size: 1.5em;
 }
 
+.simple .expression{
+    font-size: 1em;
+    right: 5px;
+    bottom: 2.7em;
+}
+
 .expression{
     display: block;
     color:#ccc;
     font-family: 'Work Sans', helvetica, sans-serif;
-    font-size: 1em;
+    font-size: 1.2em;
     position: absolute;
     right: 5px;
-    bottom: 2.7em;
+    bottom: 3em;
 }
 
 @keyframes colors {
@@ -153,4 +159,12 @@ body{
     .display-text{
         font-size: 1.5em;
     }
+
+    .expression{
+        font-size: 1em;
+        right: 5px;
+        bottom: 2.7em;
+    }
+
+
 }
