@@ -7,6 +7,8 @@ function calculate(numbers, operators){
                     return number + operatorSymbol(operators[i])
                     });
 
+                    console.log(expMap);
+
     return eval(expMap.join(""));
 }
 
@@ -21,7 +23,7 @@ function operatorSymbol(operator){
             case "plus":
                 return "+"
             default:
-                return;
+                return "%";
         }
     }
 
