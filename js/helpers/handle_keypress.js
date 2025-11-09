@@ -6,75 +6,108 @@
     let invalidKey = false,
         inputObject = {};
 
-    
-    if ( evt.keyCode === 61 || evt.keyCode === 13 ) {
 
-      inputObject = { type: "operator", equals: true };
+        switch (evt.key) {
 
-    } else if ( evt.keyCode >= 42 && evt.keyCode <= 47 ) { // fix
-      
-      switch ( evt.keyCode ) {
+          case "0":
 
-          case 42:
-
-            inputObject = { type: "operator", multiply: true };
+            inputObject = { type: "number", number: "0"};
             break;
 
-          case 43:
+          case "1":
 
-            inputObject = { type: "operator", plus: true };
+            inputObject = { type: "number", number: "1" };
             break;
 
-          case 44:
+          case "2":
 
-            invalidKey = true;
+            inputObject = { type: "number", number: "2"};
             break;
 
-          case 45:
+          case "3":
 
-            inputObject = { type: "operator", minus: true };
+            inputObject = { type: "number", number: "3"};
             break;
 
-          case 46:
+          case "4":
 
-            inputObject = { type: "dot", dot: true };
+            inputObject = { type: "number", number: "4"};
             break;
 
-          case 47:
+          case "5":
 
-            inputObject = { type: "operator", divide: true };
+            inputObject = { type: "number", number: "5"};
+            break;
+
+          case "6":
+
+            inputObject = { type: "number", number: "6"};
+            break;
+
+          case "7":
+
+            inputObject = { type: "number", number: "7"};
+            break;
+
+          case "8":
+
+            inputObject = { type: "number", number: "8"};
+            break;
+
+          case "9":
+
+            inputObject = { type: "number", number: "9"};
+            break;
+
+          case "/":
+
+            inputObject = { type: "operator", op: "divide"};
+            break;
+
+          case "*":
+
+            inputObject = { type: "operator", op: "multiply"};
+            break;
+
+          case "+":
+
+            inputObject = { type: "operator", op: "plus"};
+            break;
+
+          case "-":
+
+            inputObject = { type: "operator", op: "subtract"};
+            break;
+
+          case "=":
+
+            inputObject = { type: "operator", op: "equals"};
+            break;
+          
+          case ".":
+
+            inputObject = { type: "decimal", value: "."};
+            break;
+
+          case "Escape":
+
+            inputObject = { type: "simple-function", func: "cancel"};
+            break;
+
+          case "%":
+
+            inputObject = { type: "simple-function", func: "percentage"};
             break;
 
           default:
 
             invalidKey = true;
-            break;
-      }
 
-    } else if ( evt.keyCode >= 48 && evt.keyCode <= 57 ) {
-        
-        inputObject = { type: "number", number: evt.key };
+        }
 
-     } else if ( evt.keyCode === 37) {
-
-        inputObject = { type: "sf", percentage: true };
-
-     } else if ( evt.keyCode === 99 ) {
-
-        inputObject = { type: "sf", ac: true };
-
-     } else if ( evt.keyCode === 112 ) {
-
-        inputObject = { type: "sf", pm: true };
-
-     } else {
-
-      invalidKey = true;
-
-     }
-
-    // Call eventManager
-    if ( !invalidKey && evt.keyCode !== 16 ) {
+  
+    
+    if ( !invalidKey) {
 
      return inputObject;
 
