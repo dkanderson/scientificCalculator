@@ -75,7 +75,36 @@ import handleKeyPress from "./helpers/handle_keypress.js";
     function handleKeyPressEvent(event){
 
         const keyObj = handleKeyPress(event);
-        console.log(keyObj);
+        
+        if(keyObj){
+
+            switch(keyObj.type){
+
+                case "number":
+                    
+                    handleNumber(keyObj.number);
+                    break;
+                
+                case "operator":
+                    
+                    handleOperator(keyObj.op);
+                    break;
+
+                case "simple-function":
+
+                    handleSimpleFunction(keyObj.func);
+                    break;
+
+                case "decimal":
+
+                    handleDecimal();
+                    break;
+
+                default:
+
+                    console.error("Error: Invalid Key");
+            }
+        }
     }
 
     function updateScreen(displayText, exp){
@@ -128,6 +157,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.negativeFlag = false;
                 State.operatorOnce = false;
                 State.equated = false;
+                State.percentage = false;
                 updateScreen("0");
                 updateScreen("", true);
                 break;
@@ -227,6 +257,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
 
         State.negativeFlag = false;
         State.operatorOnce = true;                          //set operator once flag to true (operator button has been pressed once and no numbers have been entered)
+        State.equated = false;
+       
         if(State.cache.length){
         State.numCache.push(parseFloat(State.cache.join(""))); // store the last number entered into an array
         }
