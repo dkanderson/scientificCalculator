@@ -19,7 +19,10 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         operatorOnce: false,
         negativeFlag: false,
         equated: false,
-        percentage: false
+        percentage: false,
+        openBracket: 0,
+        hasBrackets: false,
+        memory: null
     }
 
 
@@ -29,7 +32,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
 
     buttons.forEach((button) => {                                   // handle mouse click on buttons
         button.addEventListener("click", function(){
-            handleClick(button.getAttribute("class"), this)
+            handleClick(button.getAttribute("class"), this);
+            console.log(button.getAttribute("class"))
         })
     });
 
@@ -49,10 +53,10 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 handleSimpleFunction(sfunc);
                 break;
 
-            case className === "special-function":
+            case className.includes("special-function"):
                 const func = button.getAttribute("data-function");
 
-                handleSpecialFunction(func, State);
+                handleSpecialFunction(func, State, button);
                 break;
 
             case className === "basic-operator":
@@ -158,6 +162,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.operatorOnce = false;
                 State.equated = false;
                 State.percentage = false;
+                State.openBracket = 0;
+                State.hasBrackets = false;
                 updateScreen("0");
                 updateScreen("", true);
                 break;
@@ -232,6 +238,11 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 updateScreen(State.expression.join(""));        // update screen with multiply symbol
             }
 
+            if(State.cache.length === 1 && State.cache[0] === '0'){     // no leading zeroes
+                State.cache = [];
+                State.expression = [];
+            }
+
             
             State.percentage = false;
             State.operatorOnce = false;                         // reset operator once flag ( makes sure there are no duplicate operators)
@@ -269,8 +280,34 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         updateScreen(State.expression.join(""));            // update the screen with what is in the expression array
 
         if(State.operator[State.operator.length -1] === "equals"){  // if the operator is the equals button
-                console.log(State.numCache, State.operator);
-            let result = calculate(State.numCache, State.operator); // calculate result based on simple mathematical operator precedence
+            
+            let result = 0; 
+            
+            if(State.hasBrackets){
+
+                // console.log(State.openBracket);
+                if(State.openBracket > 0){
+                    let brackets = ")".repeat(State.openBracket);
+                    State.expression.push(brackets);
+                    State.openBracket = 0;
+                    updateScreen(State.expression.join(""));
+                }
+
+                let validExp = State.expression.join("")
+                                .replaceAll("&times;", "*")
+                                .replaceAll("&divide;", "/")
+                                .replaceAll("&#43;", "+")
+                                .replaceAll("&minus;", "-"); console.log(validExp);
+
+                result = eval(validExp);
+                State.hasBrackets = false;
+
+            } else {
+
+                result = calculate(State.numCache, State.operator); // calculate result based on simple mathematical operator precedence
+
+            }
+            
             
             // reset
             State.numCache = [];
