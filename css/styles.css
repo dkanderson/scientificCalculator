@@ -67,6 +67,22 @@ body{
     background-color: #F57F17;
 }
 
+.buttons .second{
+    display: none;
+}
+
+.buttons.second .second{
+    display: inline;
+}
+
+.buttons.second .first{
+    display: none;
+}
+
+.buttons sup, .buttons sub{
+    font-size: .7rem;
+}
+
 .compact, .extended{
     display: grid;
 }

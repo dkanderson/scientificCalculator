@@ -19,7 +19,7 @@
         <span id="expression" class="expression"></span>
         <output id="display-text" class="display-text" aria-label="Calculator Screen">0</output>
     </header>
-    <section class="buttons">
+    <section id="buttons" class="buttons">
         <div class="extended">
             <div class="row">
                 <button class="special-function" data-function="left-bracket">&#40;</button>
@@ -34,30 +34,30 @@
                 <button class="special-function" data-function="x-squared">x<sup>2</sup></button>
                 <button class="special-function" data-function="x-cubed">x<sup>3</sup></button>
                 <button class="special-function" data-function="x-to-the-y">x<sup>y</sup></button>
-                <button class="special-function" data-function="e-to-the-x">e<sup>x</sup></button>
-                <button class="special-function" data-function="ten-to-the-x">10<sup>x</sup></button>
+                <button class="special-function" data-function="e-to-the-x"><span class="first">e<sup>x</sup></span><span class="second">y<sup>x</sup></span></button>
+                <button class="special-function" data-function="ten-to-the-x"><span class="first">10<sup>x</sup></span><span class="second">2<sup>x</sup></span></button>
             </div>
             <div class="row">
                 <button class="special-function" data-function="one-over-x">1/x</button>
                 <button class="special-function" data-function="square-root">sqrt</button>
                 <button class="special-function" data-function="cube-root">cbrt</button>
                 <button class="special-function" data-function="yx-root">yxrt</button>
-                <button class="special-function" data-function="ln">ln</button>
-                <button class="special-function" data-function="log-ten">log<sub>10</sub></button>
+                <button class="special-function" data-function="ln"><span class="first">ln</span><span class="second">log<sub>y</sub></span></button>
+                <button class="special-function" data-function="log-ten"><span class="first">log<sub>10</sub></span><span class="second">log<sub>2</sub></span></button>
             </div>
             <div class="row">
                 <button class="special-function" data-function="factorial">x!</button>
-                <button class="special-function" data-function="sine">sin</button>
-                <button class="special-function" data-function="cosine">cos</button>
-                <button class="special-function" data-function="tangent">tan</button>
+                <button class="special-function" data-function="sine"><span class="first">sin</span><span class="second">sin<sup>-1</sup></span></button>
+                <button class="special-function" data-function="cosine"><span class="first">cos</span><span class="second">cos<sup>-1</sup></span></button>
+                <button class="special-function" data-function="tangent"><span class="first">tan</span><span class="second">tan<sup>-1</sup></span></button>
                 <button class="special-function" data-function="e">e</button>
                 <button class="special-function" data-function="EE">EE</button>
             </div>
             <div class="row">
                 <button class="special-function" data-function="rad">rad</button>
-                <button class="special-function" data-function="sine-h">sinh</button>
-                <button class="special-function" data-function="cosine-h">cosh</button>
-                <button class="special-function" data-function="tangent-h">tanh</button>
+                <button class="special-function" data-function="sine-h"><span class="first">sinh</span><span class="second">sinh<sup>-1</sup></span></button>
+                <button class="special-function" data-function="cosine-h"><span class="first">cosh</span><span class="second">cosh<sup>-1</sup></span></button>
+                <button class="special-function" data-function="tangent-h"><span class="first">tanh</span><span class="second">tanh<sup>-1</sup></span></button>
                 <button class="special-function" data-function="pi">&pi;</button>
                 <button class="special-function" data-function="random">rand</button>
             </div>

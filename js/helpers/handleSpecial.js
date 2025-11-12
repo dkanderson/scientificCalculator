@@ -27,6 +27,30 @@ function handleSpecialFunction(func, State, button){
             handleMemory(func, State);
             break;
 
+        case "second-toggle":
+            handleSecondToggle(button, State);
+            break;
+
+        case "x-squared":
+            handleXsquared(State);
+            break;
+
+        case "x-cubed":
+            handleXcubed(State);
+            break;
+
+        case "x-to-the-y":
+            handleXtty(State);
+            break;
+
+        case "e-to-the-x":
+            handleEttx(State);
+            break;
+
+        case "ten-to-the-x":
+            handleTenttx(State);
+            break;
+
         default:
             console.error("Error: invalid function or feature not installed");
     }
@@ -226,6 +250,26 @@ function handleMemory(func, State){
                 State.cache.push(State.memory.toString());
                 State.expression.push(State.memory.toString());
                 updateScreen(State.expression.join(""));
+                updateScreen("", true);
+            } else
+
+            if(State.operatorOnce){
+
+                State.operatorOnce = false;
+                State.cache = [];
+                State.cache.push(State.memory.toString());
+                State.expression.push(State.memory.toString());
+                updateScreen(State.expression.join(""));
+            } else {
+
+                State.operator.push("multiply");
+                State.numCache.push(parseFloat(State.cache.join("")));
+                State.expression.push(operatorSymbol("multiply"));
+                State.cache = [];
+                State.cache.push(State.memory.toString());
+                State.expression.push(State.memory.toString());
+                updateScreen(State.expression.join(""));
+
             }
             console.log("State memory: ", State.memory);
             break;
@@ -238,6 +282,34 @@ function handleMemory(func, State){
         default:
             console.error("Error: Not a memory function")
     }
+}
+
+function handleSecondToggle(button, State){
+    const buttons = document.getElementById("buttons");
+    buttons.classList.toggle("second")
+    button.classList.toggle("active");
+    State.secondToggle = true;
+    console.log(buttons);
+}
+
+function handleXsquared(State){
+
+}
+
+function handleXcubed(State){
+
+}
+
+function handleXtty(State){
+
+}
+
+function handleEttx(State){
+
+}
+
+function handleTenttx(State){
+
 }
 
 export default handleSpecialFunction;
