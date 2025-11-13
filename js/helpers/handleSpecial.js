@@ -289,10 +289,21 @@ function handleSecondToggle(button, State){
     buttons.classList.toggle("second")
     button.classList.toggle("active");
     State.secondToggle = true;
-    console.log(buttons);
+    // console.log(buttons);
 }
 
 function handleXsquared(State){
+
+    if(!State.cache.length){
+        State.expression.push("0");
+        State.cache.push("0");
+    }
+
+    State.expression.push("^(2)");
+    State.operatorOnce = false;
+    State.hasExp.push({ exp: 3, value: State.cache.join("") });
+    updateScreen(State.expression.join(""))
+    // console.log(State.expression)
 
 }
 

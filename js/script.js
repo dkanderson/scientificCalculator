@@ -22,7 +22,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         percentage: false,
         openBracket: 0,
         hasBrackets: false,
-        memory: null
+        memory: null,
+        hasExp: []
     }
 
 
@@ -266,6 +267,10 @@ import handleKeyPress from "./helpers/handle_keypress.js";
             
         }
 
+        if(State.hasExp.length){
+            handleExponent();
+        }
+
         State.negativeFlag = false;
         State.operatorOnce = true;                          //set operator once flag to true (operator button has been pressed once and no numbers have been entered)
         State.equated = false;
@@ -338,6 +343,24 @@ import handleKeyPress from "./helpers/handle_keypress.js";
             State.expression.push('.');                              // add the decimal to the number cache
         }
         updateScreen(State.expression.join(""));                 // update the screen with the contents of the cahce 
+    }
+
+    function handleExponent(){
+        console.log("expression: ", State.expression);
+        console.log("Handle Exp: ", State.hasExp);
+        console.log("NUM CACHE: ", State.numCache);
+
+        State.hasExp.forEach((exp) => {
+            let total = exp.value;
+
+            for(let i = 1; i < exp.exp; i++){
+                total = total * parseFloat(exp.value);
+                 console.log("updating total: ", total);
+            }
+           
+        })
+
+        // State.hasExp = [];
     }
 
     const proxyHandler = {
