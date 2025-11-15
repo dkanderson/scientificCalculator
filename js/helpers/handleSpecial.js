@@ -301,17 +301,43 @@ function handleXsquared(State){
 
     State.expression.push("^(2)");
     State.operatorOnce = false;
-    State.hasExp.push({ exp: 3, value: State.cache.join("") });
-    updateScreen(State.expression.join(""))
-    // console.log(State.expression)
+    State.hasExp.push({ exp: 2, value: State.cache.join("") });
+    updateScreen(State.expression.join(""));
 
 }
 
 function handleXcubed(State){
 
+     if(!State.cache.length){
+        State.expression.push("0");
+        State.cache.push("0");
+    }
+
+    State.expression.push("^(3)");
+    State.operatorOnce = false;
+    State.hasExp.push({ exp: 3, value: State.cache.join("") });
+    updateScreen(State.expression.join(""))
+  
 }
 
 function handleXtty(State){
+
+    if(State.xtty.length){
+        return;
+    }
+
+    const xttyBtn = document.getElementById("xtty");
+    xttyBtn.classList.add("active");
+
+    if(!State.cache.length){
+        State.expression.push("0");
+        State.cache.push("0");
+    }
+
+    State.xtty.active = true;
+    State.xtty.value = State.cache.join("");
+
+    
 
 }
 

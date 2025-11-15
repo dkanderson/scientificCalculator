@@ -23,7 +23,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         openBracket: 0,
         hasBrackets: false,
         memory: null,
-        hasExp: []
+        hasExp: [],
+        xtty: {active: false, exp: [], value: null}
     }
 
 
@@ -165,6 +166,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.percentage = false;
                 State.openBracket = 0;
                 State.hasBrackets = false;
+                State.hasExp = [];
+                State.xtty = { active: false, exp: [], value: null};
                 updateScreen("0");
                 updateScreen("", true);
                 break;
@@ -239,6 +242,26 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 updateScreen(State.expression.join(""));        // update screen with multiply symbol
             }
 
+            if(State.xtty.active){
+                console.log(State.xtty);
+
+                if(!State.xtty.exp.length){
+                    State.xtty.exp.push(num);
+                    State.expression.push("^(" + State.xtty.exp.join("") + ")");
+                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value});
+                    updateScreen(State.expression.join(""));
+                } else {
+                    State.xtty.exp.push(num);
+                    console.log(State.expression);
+                    State.expression.pop();
+                    State.expression.push("^(" + State.xtty.exp.join("") + ")");
+                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value});
+                    updateScreen(State.expression.join(""));
+                }
+                
+                return;
+            }
+
             if(State.cache.length === 1 && State.cache[0] === '0'){     // no leading zeroes
                 State.cache = [];
                 State.expression = [];
@@ -269,6 +292,14 @@ import handleKeyPress from "./helpers/handle_keypress.js";
 
         if(State.hasExp.length){
             handleExponent();
+        }
+
+        if(State.xtty.active){
+            
+            const xttyBtn = document.getElementById("xtty");
+            xttyBtn.classList.remove("active");
+
+            State.xtty = {active: false, exp: '', value: null}
         }
 
         State.negativeFlag = false;
@@ -346,21 +377,22 @@ import handleKeyPress from "./helpers/handle_keypress.js";
     }
 
     function handleExponent(){
-        console.log("expression: ", State.expression);
-        console.log("Handle Exp: ", State.hasExp);
-        console.log("NUM CACHE: ", State.numCache);
-
+        
         State.hasExp.forEach((exp) => {
-            let total = exp.value;
+            let total = parseFloat(exp.value);
 
             for(let i = 1; i < exp.exp; i++){
                 total = total * parseFloat(exp.value);
                  console.log("updating total: ", total);
             }
+
+            State.cache = [];
+            State.cache.push(total.toString());
+            // console.log(State.hasExp, State.cache)
            
         })
 
-        // State.hasExp = [];
+        State.hasExp = [];
     }
 
     const proxyHandler = {
