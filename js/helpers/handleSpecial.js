@@ -343,6 +343,26 @@ function handleXtty(State){
 
 function handleEttx(State){
 
+    if(State.cache.length){
+
+        State.hasExp.push({exp: parseFloat(State.cache.join("")), value: State.e}); // Set the exponential object
+        // console.log("Expression: ", State.expression);
+        // console.log("Cache: ", State.cache);
+        let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+        State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+        State.expression.push("e^(" + State.cache.join("") + ")");                  // Put the number into exponential notation
+        updateScreen(State.expression.join(""));
+    } else {
+
+         State.hasExp.push({exp: 0, value: State.e});                               // Set the exponential object default to zero if cache is empty
+        
+        let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+        State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+        State.expression.push("e^(0)");                                             // Put the number into exponential notation default to zero if cache is empty
+        updateScreen(State.expression.join(""));
+
+    }
+
 }
 
 function handleTenttx(State){

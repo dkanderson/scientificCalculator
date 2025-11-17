@@ -24,7 +24,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         hasBrackets: false,
         memory: null,
         hasExp: [],
-        xtty: {active: false, exp: [], value: null}
+        xtty: {active: false, exp: [], value: null},
+        e: 2.718281828459045
     }
 
 
@@ -280,7 +281,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
             return;
         } 
 
-        if(!State.cache.length && !State.percentage){                         //make sure zero (0) is the default number on expressions
+        if(!State.cache.length && !State.percentage && !State.hasExp){                         //make sure zero (0) is the default number on expressions
             State.cache.push("0");
             State.expression.push("0");
         }
@@ -377,9 +378,19 @@ import handleKeyPress from "./helpers/handle_keypress.js";
     }
 
     function handleExponent(){
+
+    console.log("show exp: ", State.hasExp);
+       
         
         State.hasExp.forEach((exp) => {
             let total = parseFloat(exp.value);
+
+             if(exp.exp === 0){                             // An exponential of zero always equals 1
+                State.cache = [];
+                State.cache.push("1");
+                State.hasExp = [];
+                return;
+            }
 
             for(let i = 1; i < exp.exp; i++){
                 total = total * parseFloat(exp.value);
