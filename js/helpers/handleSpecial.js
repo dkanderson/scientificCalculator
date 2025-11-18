@@ -51,6 +51,30 @@ function handleSpecialFunction(func, State, button){
             handleTenttx(State);
             break;
 
+        case "one-over-x":
+            handleOneoverx(State);
+            break;
+
+        case "square-root":
+            handleSquareroot(State);
+            break;
+        
+        case "cube-root":
+            handleCuberoot(State);
+            break;
+
+        case "yx-root":
+            handleYXroot(State);
+            break;
+
+        case "ln":
+            handleLn(State);
+            break;
+
+        case "log-ten":
+            handleLogten(State);
+            break;
+
         default:
             console.error("Error: invalid function or feature not installed");
     }
@@ -95,22 +119,22 @@ function handleBrackets(func, State){
 
         if(State.cache.length === 0 && State.expression.length === 0 || ( State.cache.length === 1 && State.cache[0] === '0' )){
         
-            State.openBracket += 1;
-            State.hasBrackets = true;
-            State.cache = [];
-            State.expression = [];
-            State.expression.push("(");
+            State.openBracket += 1;                     // count the number of open brackets
+            State.hasBrackets = true;                   // set flag true
+            State.cache = [];                           // reset cache
+            State.expression = [];                      // reset expression
+            State.expression.push("(");                 // add open bracket
             updateScreen(State.expression.join(""));
 
         } else {
 
-            State.openBracket += 1;
+            State.openBracket += 1;                      // count the number of open brackets
             State.hasBrackets = true;
 
             if(!State.operatorOnce){
                 
                 State.operator.push("multiply");
-                State.numCache.push(parseFloat(State.cache.join("")));      // update number cache with the last negated number
+                State.numCache.push(parseFloat(State.cache.join("")));      // update number cache with the last number
                 State.cache = [];                               // clear cache
                 State.expression.push(operatorSymbol("multiply") + "(");          // convert operator to easily understood symbol and add it to the expression array
            
@@ -131,7 +155,7 @@ function handleBrackets(func, State){
             return;
         }
 
-        State.openBracket -= 1;
+        State.openBracket -= 1;                             // reduce count of open brackets each time by 1
         State.expression.push(")");
         updateScreen(State.expression.join(""));
 
@@ -309,13 +333,13 @@ function handleXsquared(State){
 function handleXcubed(State){
 
      if(!State.cache.length){
-        State.expression.push("0");
+        State.expression.push("0");                                     // no entry? Default to zero
         State.cache.push("0");
     }
 
-    State.expression.push("^(3)");
+    State.expression.push("^(3)");                                      // update expression with exponential notation for x cubed
     State.operatorOnce = false;
-    State.hasExp.push({ exp: 3, value: State.cache.join("") });
+    State.hasExp.push({ exp: 3, value: State.cache.join("") });         // update has exponential object to be handled 
     updateScreen(State.expression.join(""))
   
 }
@@ -323,19 +347,19 @@ function handleXcubed(State){
 function handleXtty(State){
 
     if(State.xtty.length){
-        return;
+        return;                                                         // if the button is already active do nothing
     }
 
-    const xttyBtn = document.getElementById("xtty");
-    xttyBtn.classList.add("active");
+    const xttyBtn = document.getElementById("xtty");                    // get DOM element for xtty button
+    xttyBtn.classList.add("active");                                    // set class to active (highlight)
 
     if(!State.cache.length){
-        State.expression.push("0");
+        State.expression.push("0");                                     // no entry? Default to zero
         State.cache.push("0");
     }
 
-    State.xtty.active = true;
-    State.xtty.value = State.cache.join("");
+    State.xtty.active = true;                                           // set object properties active true and
+    State.xtty.value = State.cache.join("");                            // value is set to the value stored in cache joined as a string
 
     
 
@@ -354,7 +378,7 @@ function handleEttx(State){
         updateScreen(State.expression.join(""));
     } else {
 
-         State.hasExp.push({exp: 0, value: State.e});                               // Set the exponential object default to zero if cache is empty
+        State.hasExp.push({exp: 0, value: State.e});                               // Set the exponential object default to zero if cache is empty
         
         let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
         State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
@@ -363,9 +387,77 @@ function handleEttx(State){
 
     }
 
+    State.operatorNext = true;
+
 }
 
 function handleTenttx(State){
+
+     if(State.cache.length){
+
+        State.hasExp.push({exp: parseFloat(State.cache.join("")), value: 10}); // Set the exponential object
+        // console.log("Expression: ", State.expression);
+        // console.log("Cache: ", State.cache);
+        let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+        State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+        State.expression.push("10^(" + State.cache.join("") + ")");                  // Put the number into exponential notation
+        updateScreen(State.expression.join(""));
+    } else {
+
+        State.hasExp.push({exp: 0, value: 10});                               // Set the exponential object default to zero if cache is empty
+        
+        let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+        State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+        State.expression.push("10^(0)");                                             // Put the number into exponential notation default to zero if cache is empty
+        updateScreen(State.expression.join(""));
+
+    }
+
+    State.operatorNext = true;
+
+}
+
+function handleOneoverx(State){
+
+    if(!State.expression.length){
+
+        State.expression.push("(1&divide;0)");
+        updateScreen(State.expression.join(""));
+        State.numCache.push(1);
+        State.operator.push("divide");
+        State.operatorNext = true;
+        
+    } else {
+
+         let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+        State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+        State.expression.push("(1&divide;" + State.cache.join("") + ")");
+        updateScreen(State.expression.join(""));
+        State.numCache.push(1);
+        State.operator.push("divide");
+        State.operatorNext = true;
+
+    }
+
+}
+
+function handleSquareroot(State){
+
+}
+
+function handleCuberoot(State){
+
+}
+
+function handleYXroot(State){
+
+}
+
+function handleLn(State){
+
+}
+
+function handleLogten(State){
 
 }
 

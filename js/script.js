@@ -24,8 +24,9 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         hasBrackets: false,
         memory: null,
         hasExp: [],
+        operatorNext: false,
         xtty: {active: false, exp: [], value: null},
-        e: 2.718281828459045
+        e: Math.E
     }
 
 
@@ -169,6 +170,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.hasBrackets = false;
                 State.hasExp = [];
                 State.xtty = { active: false, exp: [], value: null};
+                State.operatorNext = false;
                 updateScreen("0");
                 updateScreen("", true);
                 break;
@@ -234,7 +236,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 updateScreen("", true);
             }
 
-            if(State.negativeFlag){
+            if(State.negativeFlag || State.operatorNext){
+                State.operatorNext = false;
                 State.negativeFlag = false;                     // set negative flag to false ( next number has not been negated)
                 State.operator.push("multiply");                // add a "multiply" operator to the operators array
                 State.numCache.push(parseFloat(State.cache.join("")));      // update number cache with the last negated number
@@ -247,16 +250,16 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 console.log(State.xtty);
 
                 if(!State.xtty.exp.length){
-                    State.xtty.exp.push(num);
-                    State.expression.push("^(" + State.xtty.exp.join("") + ")");
-                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value});
+                    State.xtty.exp.push(num);                                       // store number in the xtty object
+                    State.expression.push("^(" + State.xtty.exp.join("") + ")");    // wrap the number in the exponential notation
+                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value}); // pass the values to the has Exponential objected to be calculated by handler function
                     updateScreen(State.expression.join(""));
                 } else {
                     State.xtty.exp.push(num);
-                    console.log(State.expression);
-                    State.expression.pop();
-                    State.expression.push("^(" + State.xtty.exp.join("") + ")");
-                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value});
+                    // console.log(State.expression);
+                    State.expression.pop();                                         // remove last item from expression (exp notation)            
+                    State.expression.push("^(" + State.xtty.exp.join("") + ")");    // replace with multiple digits
+                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value}); // pass values to hasExp object
                     updateScreen(State.expression.join(""));
                 }
                 
@@ -300,7 +303,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
             const xttyBtn = document.getElementById("xtty");
             xttyBtn.classList.remove("active");
 
-            State.xtty = {active: false, exp: '', value: null}
+            State.xtty = {active: false, exp: [], value: null}
         }
 
         State.negativeFlag = false;
@@ -324,13 +327,13 @@ import handleKeyPress from "./helpers/handle_keypress.js";
 
                 // console.log(State.openBracket);
                 if(State.openBracket > 0){
-                    let brackets = ")".repeat(State.openBracket);
+                    let brackets = ")".repeat(State.openBracket);       // close all brackets
                     State.expression.push(brackets);
                     State.openBracket = 0;
                     updateScreen(State.expression.join(""));
                 }
 
-                let validExp = State.expression.join("")
+                let validExp = State.expression.join("")                // Replace visual operators with valid operators
                                 .replaceAll("&times;", "*")
                                 .replaceAll("&divide;", "/")
                                 .replaceAll("&#43;", "+")
@@ -379,23 +382,11 @@ import handleKeyPress from "./helpers/handle_keypress.js";
 
     function handleExponent(){
 
-    console.log("show exp: ", State.hasExp);
+    // console.log("show exp: ", State.hasExp);
        
         
         State.hasExp.forEach((exp) => {
-            let total = parseFloat(exp.value);
-
-             if(exp.exp === 0){                             // An exponential of zero always equals 1
-                State.cache = [];
-                State.cache.push("1");
-                State.hasExp = [];
-                return;
-            }
-
-            for(let i = 1; i < exp.exp; i++){
-                total = total * parseFloat(exp.value);
-                 console.log("updating total: ", total);
-            }
+            let total = Math.pow(parseFloat(exp.value), exp.exp);
 
             State.cache = [];
             State.cache.push(total.toString());
