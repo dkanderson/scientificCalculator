@@ -159,6 +159,11 @@ function handleBrackets(func, State){
         State.expression.push(")");
         updateScreen(State.expression.join(""));
 
+        if(State.hasRoot.status){
+            State.operatorNext = true; 
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+        }
+
     }
 
     
@@ -443,13 +448,121 @@ function handleOneoverx(State){
 
 function handleSquareroot(State){
 
+    if(State.hasRoot.status){
+        return;
+    }
+
+    State.hasRoot.status = true;
+    State.hasRoot.root = 2;
+
+    if(!State.cache.length){
+        
+        State.openBracket += 1;
+        State.expression.push("&radic;(");
+        updateScreen(State.expression.join(""));
+
+    } else {
+        console.log(State);
+        State.operatorNext = true;
+        if(!State.operatorOnce){
+
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+            let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+            State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+            State.expression.push("&radic;(" + State.cache.join("") + ")");
+            updateScreen(State.expression.join(""));
+
+        } else {
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+            State.openBracket += 1;
+            State.expression.push("&radic;(");
+            updateScreen(State.expression.join(""));
+        }
+        
+
+    }
+
 }
 
 function handleCuberoot(State){
 
+     if(State.hasRoot.status){
+        return;
+    }
+
+    State.hasRoot.status = true;
+    State.hasRoot.root = 3;
+
+    if(!State.cache.length){
+        
+        State.openBracket += 1;
+        State.expression.push("cbrt(");
+        updateScreen(State.expression.join(""));
+
+    } else {
+        
+        State.operatorNext = true;
+        if(!State.operatorOnce){
+
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+            let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+            State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+            State.expression.push("cbrt(" + State.cache.join("") + ")");
+            updateScreen(State.expression.join(""));
+
+        } else {
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+            State.openBracket += 1;
+            State.expression.push("cbrt(");
+            updateScreen(State.expression.join(""));
+        }
+        
+
+    }
+
 }
 
 function handleYXroot(State){
+
+    const yxrtButton = document.getElementById("yxrt");
+    yxrtButton.classList.add("active");
+
+    if(State.yxroot){
+        return;
+    }
+
+    State.yxroot = true;
+    State.hasRoot.status = true;
+    State.hasRoot.root = 2;
+
+    if(!State.cache.length){
+        
+        State.openBracket += 1;
+        State.expression.push("&radic;(");
+        updateScreen(State.expression.join(""));
+
+    } else {
+        console.log(State);
+        State.operatorNext = true;
+        if(!State.operatorOnce){
+
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+            let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
+            State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
+            State.expression.push("&radic;(" + State.cache.join("") + ")");
+            updateScreen(State.expression.join(""));
+
+        } else {
+            State.hasRoot.value = parseFloat(State.cache.join(""));
+            State.openBracket += 1;
+            State.expression.push("&radic;(");
+            updateScreen(State.expression.join(""));
+        }
+        
+
+    }
+
+
 
 }
 

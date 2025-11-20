@@ -26,7 +26,9 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         hasExp: [],
         operatorNext: false,
         xtty: {active: false, exp: [], value: null},
-        e: Math.E
+        e: Math.E,
+        hasRoot: {status: false, root: null, value: null},
+        yxroot: false
     }
 
 
@@ -171,6 +173,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.hasExp = [];
                 State.xtty = { active: false, exp: [], value: null};
                 State.operatorNext = false;
+                State.hasRoot = {status: false, root: null, value: null};
+                State.yxroot = false;
                 updateScreen("0");
                 updateScreen("", true);
                 break;
@@ -237,6 +241,11 @@ import handleKeyPress from "./helpers/handle_keypress.js";
             }
 
             if(State.negativeFlag || State.operatorNext){
+
+                if(State.hasRoot.status){
+                    handleRoot();
+                }
+
                 State.operatorNext = false;
                 State.negativeFlag = false;                     // set negative flag to false ( next number has not been negated)
                 State.operator.push("multiply");                // add a "multiply" operator to the operators array
@@ -244,6 +253,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.cache = [];                               // clear cache
                 State.expression.push(operatorSymbol("multiply"));          // convert operator to easily understood symbol and add it to the expression array
                 updateScreen(State.expression.join(""));        // update screen with multiply symbol
+                
             }
 
             if(State.xtty.active){
@@ -292,6 +302,23 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         if(State.percentage){
             handlePercentage();
             
+        }
+
+        if(State.hasRoot.status){
+           
+            if(State.openBracket > 0){
+                
+                State.openBracket -= 1;                             // reduce count of open brackets each time by 1
+                State.expression.push(")");                         // Close bracket automatically if operator is used
+                updateScreen(State.expression.join(""));
+            
+            }
+
+            if(State.hasRoot.value === null){
+                State.hasRoot.value = parseFloat(State.cache.join(""));
+            }
+
+            handleRoot();
         }
 
         if(State.hasExp.length){
@@ -395,6 +422,28 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         })
 
         State.hasExp = [];
+    }
+
+    function handleRoot(){
+        let val = 0;
+
+        if(State.hasRoot.root === 2){
+
+            val = Math.sqrt(State.hasRoot.value);
+            State.cache = [];
+            State.cache.push(val);
+            State.hasRoot.status = false;
+
+        }
+
+        if(State.hasRoot.root === 3){
+
+            val = Math.cbrt(State.hasRoot.value);
+            State.cache = [];
+            State.cache.push(val);
+            State.hasRoot.status = false;
+
+        }
     }
 
     const proxyHandler = {
