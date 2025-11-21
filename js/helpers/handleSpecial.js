@@ -160,6 +160,11 @@ function handleBrackets(func, State){
         updateScreen(State.expression.join(""));
 
         if(State.hasRoot.status){
+            if(State.yxroot){
+                const yxrtButton = document.getElementById("yxrt");
+                yxrtButton.classList.add("active");
+                State.waitingForY = true;
+            }
             State.operatorNext = true; 
             State.hasRoot.value = parseFloat(State.cache.join(""));
         }
@@ -523,9 +528,6 @@ function handleCuberoot(State){
 }
 
 function handleYXroot(State){
-
-    const yxrtButton = document.getElementById("yxrt");
-    yxrtButton.classList.add("active");
 
     if(State.yxroot){
         return;

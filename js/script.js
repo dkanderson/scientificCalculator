@@ -28,7 +28,9 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         xtty: {active: false, exp: [], value: null},
         e: Math.E,
         hasRoot: {status: false, root: null, value: null},
-        yxroot: false
+        yxroot: false,
+        waitingForY: false,
+        expCache: []
     }
 
 
@@ -175,6 +177,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.operatorNext = false;
                 State.hasRoot = {status: false, root: null, value: null};
                 State.yxroot = false;
+                State.waitingForY = false;
                 updateScreen("0");
                 updateScreen("", true);
                 break;
@@ -242,8 +245,19 @@ import handleKeyPress from "./helpers/handle_keypress.js";
 
             if(State.negativeFlag || State.operatorNext){
 
-                if(State.hasRoot.status){
+                if(State.hasRoot.status && !State.waitingForY){
                     handleRoot();
+                } else {
+                    
+                    State.expCache.push(num);
+                    if(State.expCache.length > 1){
+                        State.expression.splice(0, State.expCache.length - 1)
+                    }
+                    State.expression.unshift(State.expCache.join(""));
+
+                    State.hasRoot.root = parseFloat(State.expCache.join(""));
+                    updateScreen(State.expression.join(""));
+                    return;
                 }
 
                 State.operatorNext = false;
@@ -439,6 +453,15 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         if(State.hasRoot.root === 3){
 
             val = Math.cbrt(State.hasRoot.value);
+            State.cache = [];
+            State.cache.push(val);
+            State.hasRoot.status = false;
+
+        }
+
+        if(State.hasRoot.root > 3 || State.hasRoot.root < 2){
+
+            val = Math.pow(State.hasRoot.value, (1/State.hasRoot.root));
             State.cache = [];
             State.cache.push(val);
             State.hasRoot.status = false;
