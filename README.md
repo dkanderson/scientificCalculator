@@ -51,6 +51,7 @@ project-folder/
 - Dark/light theme toggle
 - Better Keyboard support
 - Add calculator icon to button for expanding calculator
+- Use Shunting yard, tokens and RPN to improve logic
 
 ## License
 

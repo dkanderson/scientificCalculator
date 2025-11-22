@@ -278,14 +278,14 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 if(!State.xtty.exp.length){
                     State.xtty.exp.push(num);                                       // store number in the xtty object
                     State.expression.push("^(" + State.xtty.exp.join("") + ")");    // wrap the number in the exponential notation
-                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value}); // pass the values to the has Exponential objected to be calculated by handler function
+                   // State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value}); // pass the values to the has Exponential objected to be calculated by handler function
                     updateScreen(State.expression.join(""));
                 } else {
                     State.xtty.exp.push(num);
                     // console.log(State.expression);
                     State.expression.pop();                                         // remove last item from expression (exp notation)            
                     State.expression.push("^(" + State.xtty.exp.join("") + ")");    // replace with multiple digits
-                    State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value}); // pass values to hasExp object
+                    //State.hasExp.push({exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value}); // pass values to hasExp object
                     updateScreen(State.expression.join(""));
                 }
                 
@@ -310,13 +310,26 @@ import handleKeyPress from "./helpers/handle_keypress.js";
             return;
         } 
 
-        if(!State.cache.length && !State.percentage && !State.hasExp){                         //make sure zero (0) is the default number on expressions
+        if(!State.cache.length === 0 && State.expression.length === 0 && !State.percentage && !State.hasExp.length === 0){                         //make sure zero (0) is the default number on expressions
             State.cache.push("0");
             State.expression.push("0");
         }
 
         if(State.percentage){
             handlePercentage();
+            
+        }
+
+        if(State.xtty.active){
+
+            const xttyBtn = document.getElementById("xtty");                    // get DOM element for xtty button
+            xttyBtn.classList.remove("active");  
+
+            // push the completed exponent object if there is one
+            if(State.xtty.exp.length){
+                State.hasExp.push({ exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value });
+            }
+            State.xtty = {active: false, exp: [], value: null}
             
         }
 
@@ -471,13 +484,13 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         }
     }
 
-    const proxyHandler = {
-        set: function(obj, prop, value){
-            console.log(`The property ${prop} has changed from ${obj[prop]} to ${value}`);
+    // const proxyHandler = {
+    //     set: function(obj, prop, value){
+    //         console.log(`The property ${prop} has changed from ${obj[prop]} to ${value}`);
 
-            obj[prop] = value;
-        }
-    }
+    //         obj[prop] = value;
+    //     }
+    // }
 
     const observableState = new Proxy(State, proxyHandler);
 

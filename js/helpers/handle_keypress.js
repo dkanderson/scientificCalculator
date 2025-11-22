@@ -99,6 +99,11 @@
             inputObject = { type: "simple-function", func: "percentage"};
             break;
 
+          case "Enter":
+
+            inputObject = { type: "operator", op: "equals"};
+            break;
+
           default:
 
             invalidKey = true;

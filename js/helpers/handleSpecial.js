@@ -356,7 +356,7 @@ function handleXcubed(State){
 
 function handleXtty(State){
 
-    if(State.xtty.length){
+    if(State.xtty.active){
         return;                                                         // if the button is already active do nothing
     }
 
