@@ -552,6 +552,7 @@ function handleYXroot(State){
             let lastIndex = State.expression.length - State.cache.length;               // Get the start index of the number entered 
             State.expression.splice(lastIndex, State.cache.length);                     // Remove the entered number from the expressioin
             State.expression.push("&radic;(" + State.cache.join("") + ")");
+            State.waitingForY = true;
             updateScreen(State.expression.join(""));
 
         } else {

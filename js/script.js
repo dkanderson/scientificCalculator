@@ -180,6 +180,8 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.waitingForY = false;
                 updateScreen("0");
                 updateScreen("", true);
+                const yxrtButton = document.getElementById("yxrt");
+                yxrtButton.classList.remove("active");
                 break;
             case "pos-neg":
                 if(State.expression.length && !State.negativeFlag){             // --if there is an expression and no negative flag has been set

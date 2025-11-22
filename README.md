@@ -50,6 +50,7 @@ project-folder/
 - Improved mobile layout
 - Dark/light theme toggle
 - Better Keyboard support
+- Add calculator icon to button for expanding calculator
 
 ## License
 
