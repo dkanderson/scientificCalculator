@@ -1,19 +1,56 @@
-# Scientific Calculator
+# Scientific Calculator App
 
-The Scientific Calculator is a HTML, CSS and vanilla JavaScript calculator. Based on apple's calculator functions.
+## Overview
 
-## Installation
+This project is a simple and extensible calculator application built with HTML, CSS, and JavaScript. It demonstrates core front-end concepts such as event handling, DOM manipulation, state management, and math operations.
 
-Installation is simple, this is a static app, just download or clone all files into your directory and run the index.html file in your browser
+## Features
 
-## Usage
+- Basic arithmetic operations (addition, subtraction, multiplication, division)
+- Support for factorial, roots, degrees/radians mode
+- Responsive UI layout
+- Clean and modular JavaScript logic
 
-... open index.html in your browser
+## Technologies Used
 
-## Contributing
+- **HTML5** for structure
+- **CSS3** for layout and styling
+- **JavaScript (ES6+)** for functionality
 
-My goal here is merely to challenge myself to do something intimidating and stimulate my mind. If you play with it and something breaks, open an issue and lets talk about it.
+## Project Structure
+
+```
+project-folder/
+├── index.html
+├── css/
+│ └── styles.css
+├── js/
+│ ├── script.js
+│ └── helpers/
+│ └── calculate.js
+│ └── handle_keypress.js
+│ └── handleSpecial.js
+└── README.md
+```
+
+## How to Run
+
+1. Clone or download the project folder.
+2. Open `index.html` in any modern browser.
+
+## How It Works
+
+- Buttons in the UI trigger JavaScript functions.
+- Internal state is preserved using closures.
+- Operations are computed and displayed on the calculator screen.
+
+## Future Improvements
+
+- Add scientific functions (sin, cos, tan, log, rad, etc)
+- Improved mobile layout
+- Dark/light theme toggle
+- Better Keyboard support
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+This project is open-source and free to modify.
