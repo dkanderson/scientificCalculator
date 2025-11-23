@@ -1,6 +1,7 @@
-import calculate from "./helpers/calculate.js";
+import { calculate, compute } from "./helpers/calculate.js";
 import handleSpecialFunction from "./helpers/handleSpecial.js";
 import handleKeyPress from "./helpers/handle_keypress.js";
+import { operatorSymbol } from "./helpers/operator_symbol.js";
 
 (()=>{
     // get dom elements
@@ -130,20 +131,6 @@ import handleKeyPress from "./helpers/handle_keypress.js";
         } 
     }
 
-    function operatorSymbol(operator){
-        switch(operator){
-            case "divide":
-                return "&divide;";
-            case "multiply":
-                return "&times;"
-            case "subtract":
-                return "&minus;";
-            case "plus":
-                return "&#43;"
-            default:
-                return;
-        }
-    }
 
     function handlePercentage(){
 
@@ -395,7 +382,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                                 .replaceAll("&#43;", "+")
                                 .replaceAll("&minus;", "-"); console.log(validExp);
 
-                result = eval(validExp);
+                result = compute(validExp);
                 State.hasBrackets = false;
 
             } else {
