@@ -330,7 +330,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
                 State.hasExp.push({ exp: parseFloat(State.xtty.exp.join("")), value: State.xtty.value });
             }
             State.xtty = {active: false, exp: [], value: null}
-            
+
         }
 
         if(State.hasRoot.status){
@@ -492,7 +492,7 @@ import handleKeyPress from "./helpers/handle_keypress.js";
     //     }
     // }
 
-    const observableState = new Proxy(State, proxyHandler);
+    //const observableState = new Proxy(State, proxyHandler);
 
     // observableState.deceimalFlag = true;
 
