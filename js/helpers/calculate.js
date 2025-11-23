@@ -1,4 +1,6 @@
-function computeBinary(a, b, opKey){
+import { tokenize, toRPN, evaluateRPN } from "./expression_eval.js";
+
+export function computeBinary(a, b, opKey){
     const aN = Number(a);
     const bN = Number(b);
 
@@ -12,7 +14,7 @@ function computeBinary(a, b, opKey){
     }
 }
 
-function calculate(numbers, operators){
+export function calculate(numbers, operators){
     // Defensive copies
     const nums = numbers.map(n => Number(n));
     const ops  = operators.slice(); // might be shorter or longer
@@ -54,4 +56,11 @@ function calculate(numbers, operators){
     return result;
 }
 
-export default calculate;
+export function compute(expression) {
+  const tokens = tokenize(expression);
+  const rpn = toRPN(tokens);
+  return evaluateRPN(rpn);
+}
+
+
+
