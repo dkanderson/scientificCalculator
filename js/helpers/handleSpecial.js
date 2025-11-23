@@ -1,3 +1,5 @@
+import { operatorSymbol } from './operator_symbol.js';
+
 function handleSpecialFunction(func, State, button){
     console.log(func, State, button);
 
@@ -91,22 +93,6 @@ function updateScreen(displayText, exp){
         display.innerHTML = displayText;
     } 
 }
-
- function operatorSymbol(operator){
-    switch(operator){
-        case "divide":
-            return "&divide;";
-        case "multiply":
-            return "&times;"
-        case "subtract":
-            return "&minus;";
-        case "plus":
-            return "&#43;"
-        default:
-            return;
-    }
-}
-
 
 
 function handleBrackets(func, State){
