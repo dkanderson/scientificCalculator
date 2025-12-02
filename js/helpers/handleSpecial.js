@@ -519,6 +519,9 @@ function handleYXroot(State){
         return;
     }
 
+    const yxrootBtn = document.getElementById("yxrt");                    // get DOM element for xtty button
+    yxrootBtn.classList.add("active");  
+
     State.yxroot = true;
     State.hasRoot.status = true;
     State.hasRoot.root = 2;

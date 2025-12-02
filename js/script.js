@@ -233,16 +233,32 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
             }
 
             if(State.negativeFlag || State.operatorNext){
-
-                if(State.hasRoot.status && !State.waitingForY){
-                    handleRoot();
-                } else {
+                
+                if(State.waitingForY) {                    
                     
                     State.expCache.push(num);
-                    if(State.expCache.length > 1){
-                        State.expression.splice(0, State.expCache.length - 1)
-                    }
-                    State.expression.unshift(State.expCache.join(""));
+                   
+                    let lastItem = State.expression.length - 1;
+
+                    // Position yroot to the left of the expression it realates to
+                    if(State.expression[lastItem].includes("&radic;")){
+                        if(State.expCache.length <= 1) {
+                            State.expression.splice(lastItem, 0, State.expCache.join(""));
+                        } else {
+                            State.expression.splice(lastItem-1,1, State.expCache.join(""));
+                        }
+                        
+                    } else {
+                        let offset = State.cache.length + 1;
+
+                        if(State.expCache.length <= 1) {
+
+                            State.expression.splice(offset, 0, State.expCache.join(""));
+                        }else{
+                            
+                            State.expression.splice(offset, 1, State.expCache.join(""));
+                        }
+                    } 
 
                     State.hasRoot.root = parseFloat(State.expCache.join(""));
                     updateScreen(State.expression.join(""));
@@ -296,6 +312,16 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
         if(State.operatorOnce){                             //ensure operator is only pressed once
             return;
         } 
+
+        if(State.waitingForY){
+            State.waitingForY = false;
+            State.operatorNext = false;
+            State.expCache = [];
+            State.yxroot = false;
+
+            const yxrootBtn = document.getElementById("yxrt");                    // get DOM element for xtty button
+            yxrootBtn.classList.remove("active");  
+        }
 
         if(!State.cache.length === 0 && State.expression.length === 0 && !State.percentage && !State.hasExp.length === 0){                         //make sure zero (0) is the default number on expressions
             State.cache.push("0");
@@ -448,7 +474,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
             val = Math.sqrt(State.hasRoot.value);
             State.cache = [];
             State.cache.push(val);
-            State.hasRoot.status = false;
+            State.hasRoot = {status: false, root: null, value: null};
 
         }
 
@@ -457,7 +483,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
             val = Math.cbrt(State.hasRoot.value);
             State.cache = [];
             State.cache.push(val);
-            State.hasRoot.status = false;
+            State.hasRoot = {status: false, root: null, value: null};
 
         }
 
@@ -466,7 +492,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
             val = Math.pow(State.hasRoot.value, (1/State.hasRoot.root));
             State.cache = [];
             State.cache.push(val);
-            State.hasRoot.status = false;
+            State.hasRoot = {status: false, root: null, value: null};
 
         }
     }
