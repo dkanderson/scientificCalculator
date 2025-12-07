@@ -56,21 +56,14 @@ export function tokenize(input) {
 
       // classify
       if (
-        [
-          "root",
-          "cbrt",
-          "sqrt",
-          "sin",
-          "cos",
-          "tan",
-          "log",
-          "ln",
-          "exp",
-        ].includes(id)
+        ["cbrt", "sqrt", "sin", "cos", "tan", "log", "ln", "exp"].includes(id)
       ) {
         tokens.push({ type: "function", value: id });
       } else if (["pi", "e"].includes(id)) {
         tokens.push({ type: "constant", value: id });
+      } else if (id === "root") {
+        //treat root like a binary operator
+        tokens.push({ type: "operator", value: "root" });
       } else {
         throw new Error("Unknown identifier: " + id);
       }
@@ -115,18 +108,20 @@ export function toRPN(tokens) {
   const stack = [];
 
   const PRECEDENCE = {
-    "unary-": 5,
-    "^": 4,
-    "*": 3,
-    "/": 3,
-    "%": 3,
-    "+": 2,
-    "-": 2,
+    "unary-": 6,
+    "^": 5,
+    root: 5,
+    "*": 4,
+    "/": 4,
+    "%": 4,
+    "+": 3,
+    "-": 3,
   };
 
   const RIGHT_ASSOC = {
     "^": true,
     "unary-": true,
+    root: true,
   };
 
   for (const token of tokens) {
@@ -181,6 +176,7 @@ export function toRPN(tokens) {
       while (stack.length && stack[stack.length - 1].value !== "(") {
         output.push(stack.pop());
       }
+      if (!stack.length) throw new Error("Mismatched Parenthesis");
       stack.pop(); // discard "("
 
       // if function on top → output it
@@ -235,6 +231,7 @@ export function evaluateRPN(rpn) {
     "/": (a, b) => a / b,
     "%": (a, b) => a % b,
     "^": (a, b) => Math.pow(a, b),
+    root: (a, b) => Math.pow(b, 1 / a),
     "unary-": (a) => -a,
   };
 
@@ -276,11 +273,30 @@ export function evaluateRPN(rpn) {
       // Binary operator (2 arguments)
       const b = stack.pop();
       const a = stack.pop();
-      if (a === undefined || b === undefined) {
-        throw new Error("Missing operands for operator " + op);
+
+      // If left operand is missing but we have b
+      // treat percent as unary postfix: b5 -> b / 100
+      if ((a === undefined || a === null) && b !== undefined) {
+        if (op === "%") {
+          stack.push(b / 100);
+          continue;
+        } else {
+          throw new Error("Missing operands for operator " + op);
+        }
       }
 
-      stack.push(OPERATORS[op](a, b));
+      if (a === undefined && b === undefined) {
+        throw new Error(
+          "Missing operands for operators: a few numbers wouldn't hurt - " + op
+        );
+      }
+
+      const opertorFn = OPERATORS[op];
+      if (!opertorFn) {
+        throw new Error("Unknown operator");
+      }
+
+      stack.push(opertorFn(a, b));
       continue;
     }
 
