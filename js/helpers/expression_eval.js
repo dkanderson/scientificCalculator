@@ -55,7 +55,19 @@ export function tokenize(input) {
       }
 
       // classify
-      if (["sqrt", "sin", "cos", "tan", "log", "ln", "exp"].includes(id)) {
+      if (
+        [
+          "root",
+          "cbrt",
+          "sqrt",
+          "sin",
+          "cos",
+          "tan",
+          "log",
+          "ln",
+          "exp",
+        ].includes(id)
+      ) {
         tokens.push({ type: "function", value: id });
       } else if (["pi", "e"].includes(id)) {
         tokens.push({ type: "constant", value: id });
@@ -78,8 +90,7 @@ export function tokenize(input) {
       // unary minus detection:
       const prev = tokens[tokens.length - 1];
       const isUnary =
-        ch === "-" &&
-        (!prev || prev.type === "operator" || prev.value === "(");
+        ch === "-" && (!prev || prev.type === "operator" || prev.value === "(");
 
       if (isUnary) {
         tokens.push({ type: "operator", value: "unary-" });
@@ -97,7 +108,6 @@ export function tokenize(input) {
   return tokens;
 }
 
-
 // Parse Tokens
 
 export function toRPN(tokens) {
@@ -111,16 +121,15 @@ export function toRPN(tokens) {
     "/": 3,
     "%": 3,
     "+": 2,
-    "-": 2
+    "-": 2,
   };
 
   const RIGHT_ASSOC = {
     "^": true,
-    "unary-": true
+    "unary-": true,
   };
 
   for (const token of tokens) {
-
     // ----- NUMBERS
     if (token.type === "number") {
       output.push(token);
@@ -151,10 +160,7 @@ export function toRPN(tokens) {
         const p1 = PRECEDENCE[o1];
         const p2 = PRECEDENCE[o2];
 
-        if (
-          (RIGHT_ASSOC[o1] && p1 < p2) ||
-          (!RIGHT_ASSOC[o1] && p1 <= p2)
-        ) {
+        if ((RIGHT_ASSOC[o1] && p1 < p2) || (!RIGHT_ASSOC[o1] && p1 <= p2)) {
           output.push(stack.pop());
         } else break;
       }
@@ -208,31 +214,31 @@ export function evaluateRPN(rpn) {
 
   const CONSTANTS = {
     pi: Math.PI,
-    e: Math.E
+    e: Math.E,
   };
 
   const FUNCTIONS = {
-    sqrt: x => Math.sqrt(x),
-    sin: x => Math.sin(x),
-    cos: x => Math.cos(x),
-    tan: x => Math.tan(x),
-    log: x => Math.log10(x),
-    ln:  x => Math.log(x),
-    exp: x => Math.exp(x)
+    sqrt: (x) => Math.sqrt(x),
+    cbrt: (x) => Math.cbrt(x),
+    sin: (x) => Math.sin(x),
+    cos: (x) => Math.cos(x),
+    tan: (x) => Math.tan(x),
+    log: (x) => Math.log10(x),
+    ln: (x) => Math.log(x),
+    exp: (x) => Math.exp(x),
   };
 
   const OPERATORS = {
-    "+":  (a, b) => a + b,
-    "-":  (a, b) => a - b,
-    "*":  (a, b) => a * b,
-    "/":  (a, b) => a / b,
-    "%":  (a, b) => a % b,
-    "^":  (a, b) => Math.pow(a, b),
-    "unary-": a => -a
+    "+": (a, b) => a + b,
+    "-": (a, b) => a - b,
+    "*": (a, b) => a * b,
+    "/": (a, b) => a / b,
+    "%": (a, b) => a % b,
+    "^": (a, b) => Math.pow(a, b),
+    "unary-": (a) => -a,
   };
 
   for (const token of rpn) {
-
     // ----- NUMBER
     if (token.type === "number") {
       stack.push(token.value);
@@ -287,5 +293,3 @@ export function evaluateRPN(rpn) {
 
   return stack[0];
 }
-
-
