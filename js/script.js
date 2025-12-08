@@ -1,4 +1,4 @@
-import { compute } from "./helpers/calculate.js";
+import { compute, cleanExp } from "./helpers/calculate.js";
 import handleSpecialFunction from "./helpers/handleSpecial.js";
 import handleKeyPress from "./helpers/handle_keypress.js";
 import { operatorSymbol } from "./helpers/operator_symbol.js";
@@ -11,7 +11,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
 
   const State = {
     cache: [],
-    numCache: [],
     displayText: [],
     operator: [],
     expression: [],
@@ -123,21 +122,11 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     }
   }
 
-  function handlePercentage() {
-    let index = State.operator.indexOf("%");
-    let num = State.numCache[index];
-
-    num = num / 100;
-    State.numCache.splice(index, 1, num);
-    State.operator.splice(index, 1);
-  }
-
   function handleSimpleFunction(sfunc) {
     switch (sfunc) {
       case "cancel":
         // Reset all values when then AC button is pressed
         State.cache = [];
-        State.numCache = [];
         State.expression = [];
         State.operator = [];
         State.inputStop = false;
@@ -193,16 +182,13 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
           //make sure zero (0) is the default number on expressions
           State.cache.push("0");
           State.expression.push("0");
-          State.numCache.push(parseFloat(State.cache.join("")));
         }
 
-        State.numCache.push(parseFloat(State.cache.join(""))); // store the last number entered into an array
         State.cache = []; // reset the cache
         State.operator.push("%");
         State.expression.push("%");
         updateScreen(State.expression.join(""));
 
-        console.log(State.numCache);
         break;
       default:
         console.error("Unknown function request");
@@ -215,7 +201,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.cache = [];
       State.expression = [];
       State.operator = [];
-      State.numCache = [];
       State.equated = false;
       updateScreen("");
       updateScreen("", true);
@@ -228,14 +213,14 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
         let lastItem = State.expression.length - 1;
 
         // Position yroot to the left of the expression it realates to
-        if (State.expression[lastItem].includes("&radic;")) {
+        if (State.expression[lastItem].includes("root")) {
           if (State.expCache.length <= 1) {
             State.expression.splice(lastItem, 0, State.expCache.join(""));
           } else {
             State.expression.splice(lastItem - 1, 1, State.expCache.join(""));
           }
         } else {
-          let offset = State.cache.length + 1;
+          let offset = State.expression.length - (State.cache.length + 2);
 
           if (State.expCache.length <= 1) {
             State.expression.splice(offset, 0, State.expCache.join(""));
@@ -252,7 +237,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.operatorNext = false;
       State.negativeFlag = false; // set negative flag to false ( next number has not been negated)
       State.operator.push("multiply"); // add a "multiply" operator to the operators array
-      State.numCache.push(parseFloat(State.cache.join(""))); // update number cache with the last negated number
+
       State.cache = []; // clear cache
       State.expression.push(operatorSymbol("multiply")); // convert operator to easily understood symbol and add it to the expression array
       updateScreen(State.expression.join("")); // update screen with multiply symbol
@@ -318,10 +303,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.expression.push("0");
     }
 
-    if (State.percentage) {
-      handlePercentage();
-    }
-
     if (State.xtty.active) {
       const xttyBtn = document.getElementById("xtty"); // get DOM element for xtty button
       xttyBtn.classList.remove("active");
@@ -346,12 +327,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       if (State.hasRoot.value === null) {
         State.hasRoot.value = parseFloat(State.cache.join(""));
       }
-
-      handleRoot();
-    }
-
-    if (State.hasExp.length) {
-      handleExponent();
     }
 
     if (State.xtty.active) {
@@ -371,9 +346,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     State.operatorOnce = true; //set operator once flag to true (operator button has been pressed once and no numbers have been entered)
     State.equated = false;
 
-    if (State.cache.length) {
-      State.numCache.push(parseFloat(State.cache.join(""))); // store the last number entered into an array
-    }
     State.cache = []; // reset the cache
     State.decimalFlag = false; // set the decimal flag to false (decimals only once)
     State.operator.push(op); // store the operator in an array
@@ -392,19 +364,12 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
         updateScreen(State.expression.join(""));
       }
 
-      let validExp = State.expression
-        .join("") // Replace visual operators with valid operators
-        .replaceAll("&times;", "*")
-        .replaceAll("&divide;", "/")
-        .replaceAll("&#43;", "+")
-        .replaceAll("&minus;", "-")
-        .replaceAll("&radic;", "sqrt");
+      cleanExp(State.expression.join(""));
 
       result = compute(validExp);
       State.hasBrackets = false;
 
       // reset
-      State.numCache = [];
       State.operator = [];
       State.cache = [];
 
@@ -434,50 +399,4 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     }
     updateScreen(State.expression.join("")); // update the screen with the contents of the cahce
   }
-
-  function handleExponent() {
-    // console.log("show exp: ", State.hasExp);
-
-    State.hasExp.forEach((exp) => {
-      let total = Math.pow(parseFloat(exp.value), exp.exp);
-
-      State.cache = [];
-      State.cache.push(total.toString());
-      // console.log(State.hasExp, State.cache)
-    });
-
-    State.hasExp = [];
-  }
-
-  function handleRoot() {
-    let val = 0;
-
-    if (State.hasRoot.root === 2) {
-      val = Math.sqrt(State.hasRoot.value);
-    }
-
-    if (State.hasRoot.root === 3) {
-      val = Math.cbrt(State.hasRoot.value);
-    }
-
-    if (State.hasRoot.root > 3 || State.hasRoot.root < 2) {
-      val = Math.pow(State.hasRoot.value, 1 / State.hasRoot.root);
-    }
-
-    State.cache = [];
-    State.cache.push(val);
-    State.hasRoot = { status: false, root: null, value: null };
-  }
-
-  // const proxyHandler = {
-  //     set: function(obj, prop, value){
-  //         console.log(`The property ${prop} has changed from ${obj[prop]} to ${value}`);
-
-  //         obj[prop] = value;
-  //     }
-  // }
-
-  //const observableState = new Proxy(State, proxyHandler);
-
-  // observableState.deceimalFlag = true;
 })();

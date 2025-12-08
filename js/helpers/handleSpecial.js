@@ -1,5 +1,5 @@
 import { operatorSymbol } from "./operator_symbol.js";
-import { compute } from "./calculate.js";
+import { compute, cleanExp } from "./calculate.js";
 
 function handleSpecialFunction(func, State, button) {
   switch (func) {
@@ -113,7 +113,7 @@ function handleBrackets(func, State) {
 
       if (!State.operatorOnce) {
         State.operator.push("multiply");
-        State.numCache.push(parseFloat(State.cache.join(""))); // update number cache with the last number
+
         State.cache = []; // clear cache
         State.expression.push(operatorSymbol("multiply") + "("); // convert operator to easily understood symbol and add it to the expression array
       } else {
@@ -165,18 +165,11 @@ function handleMemory(func, State) {
           State.operatorOnce = false;
         }
 
-        let validExp = State.expression
-          .join("")
-          .replaceAll("&times;", "*")
-          .replaceAll("&divide;", "/")
-          .replaceAll("&#43;", "+")
-          .replaceAll("&minus;", "-")
-          .replaceAll("&radic;", "sprt");
+        cleanExp(State.expression.join("")); // replace HTML entities with valid operators
 
         calculatedValue = compute(validExp) + (State.memory || 0);
         State.memory = calculatedValue;
         State.cache = [];
-        State.numCache = [];
         State.expression = [];
         State.operator = [];
         State.expression.push(calculatedValue.toString());
@@ -204,18 +197,11 @@ function handleMemory(func, State) {
           State.operatorOnce = false;
         }
 
-        let validExp = State.expression
-          .join("")
-          .replaceAll("&times;", "*")
-          .replaceAll("&divide;", "/")
-          .replaceAll("&#43;", "+")
-          .replaceAll("&minus;", "-");
-        console.log(validExp);
+        cleanExp(State.expression.join("")); // replace HTML entities with valid operators
 
         calculatedValue = (State.memory || 0) - eval(validExp);
         State.memory = calculatedValue;
         State.cache = [];
-        State.numCache = [];
         State.expression = [];
         State.operator = [];
         State.expression.push(calculatedValue.toString());
@@ -249,7 +235,6 @@ function handleMemory(func, State) {
         updateScreen(State.expression.join(""));
       } else {
         State.operator.push("multiply");
-        State.numCache.push(parseFloat(State.cache.join("")));
         State.expression.push(operatorSymbol("multiply"));
         State.cache = [];
         State.cache.push(State.memory.toString());
@@ -367,7 +352,6 @@ function handleOneoverx(State) {
   if (!State.expression.length) {
     State.expression.push("(1&divide;0)");
     updateScreen(State.expression.join(""));
-    State.numCache.push(1);
     State.operator.push("divide");
     State.operatorNext = true;
   } else {
@@ -375,7 +359,6 @@ function handleOneoverx(State) {
     State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
     State.expression.push("(1&divide;" + State.cache.join("") + ")");
     updateScreen(State.expression.join(""));
-    State.numCache.push(1);
     State.operator.push("divide");
     State.operatorNext = true;
   }
