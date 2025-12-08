@@ -67,3 +67,15 @@ export function compute(expression) {
   const rpn = toRPN(tokens);
   return evaluateRPN(rpn);
 }
+
+export function cleanExp(exp) {
+  // Replace visual operators with valid operators
+  let validExp = exp
+    .replaceAll("&times;", "*")
+    .replaceAll("&divide;", "/")
+    .replaceAll("&#43;", "+")
+    .replaceAll("&minus;", "-")
+    .replaceAll("&radic;", "sqrt");
+
+  return validExp;
+}

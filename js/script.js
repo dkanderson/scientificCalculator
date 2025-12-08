@@ -364,7 +364,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
         updateScreen(State.expression.join(""));
       }
 
-      cleanExp(State.expression.join(""));
+      let validExp = cleanExp(State.expression.join(""));
 
       result = compute(validExp);
       State.hasBrackets = false;

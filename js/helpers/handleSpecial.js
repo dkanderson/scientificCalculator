@@ -165,7 +165,7 @@ function handleMemory(func, State) {
           State.operatorOnce = false;
         }
 
-        cleanExp(State.expression.join("")); // replace HTML entities with valid operators
+        let validExp = cleanExp(State.expression.join("")); // replace HTML entities with valid operators
 
         calculatedValue = compute(validExp) + (State.memory || 0);
         State.memory = calculatedValue;
@@ -197,7 +197,7 @@ function handleMemory(func, State) {
           State.operatorOnce = false;
         }
 
-        cleanExp(State.expression.join("")); // replace HTML entities with valid operators
+        let validExp = cleanExp(State.expression.join("")); // replace HTML entities with valid operators
 
         calculatedValue = (State.memory || 0) - eval(validExp);
         State.memory = calculatedValue;
