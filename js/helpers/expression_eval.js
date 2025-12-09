@@ -309,3 +309,77 @@ export function evaluateRPN(rpn) {
 
   return stack[0];
 }
+
+export function normalizePercent(expr) {
+  let input = expr;
+
+  // exp
+  input = input.replace(
+    /(\d+[^]+)\s*\(([^()]+)\)\s*%/g,
+    (_, fn, inner) => `( ${fn}(${inner}) / 100)`
+  );
+
+  // ============================================================
+  // 1. Percent applied to a FUNCTION CALL:
+  //    sin(30)% → (sin(30) / 100)
+  //    asin(0.5)% → (asin(0.5) / 100)
+  //
+  //    FUNCTION_NAME ( ANYTHING INSIDE PARENS ) %
+  //
+  //    Function name: any letters (asin, acos, log, ln, sin, sqrt, exp...)
+  // ============================================================
+  input = input.replace(
+    /([a-zA-Z]+)\s*\(([^()]+)\)\s*%/g,
+    (_, fn, inner) => `( ${fn}(${inner}) / 100)`
+  );
+
+  // ============================================================
+  // 2. Percent applied to a PARENTHESIZED expression:  (X)% → (X)/100
+  // ============================================================
+  input = input.replace(
+    /\(([^()]+)\)\s*%/g,
+    (_, inner) => `((${inner}) / 100)`
+  );
+
+  // ============================================================
+  // 3. Standalone number%  →  number/100
+  //    but only when NOT part of A op B%
+  // ============================================================
+  input = input.replace(
+    /(?<![\d.])(\d+(\.\d+)?)%(?!\s*[+\-*/])/g,
+    (_, a) => `(${a} / 100)`
+  );
+
+  // ============================================================
+  // 4. Classic right-hand percentage (same as real calculators)
+  //    A op B%
+  // ============================================================
+  input = input.replace(
+    /(\d+(\.\d+)?)\s*([+\-*/])\s*(\d+(\.\d+)?)%/g,
+    (_, a, __, op, b) => {
+      switch (op) {
+        case "+":
+          return `(${a} + (${a} * ${b} / 100))`;
+        case "-":
+          return `(${a} - (${a} * ${b} / 100))`;
+        case "*":
+          return `(${a} * (${b} / 100))`;
+        case "/":
+          return `(${a} / (${b} / 100))`;
+      }
+    }
+  );
+
+  // ============================================================
+  // 5. Left-hand percentage
+  //    A% op B
+  // ============================================================
+  input = input.replace(
+    /(\d+(\.\d+)?)%\s*([+\-*/])\s*(\d+(\.\d+)?)/g,
+    (_, a, __, op, b) => `((${a} / 100) ${op} ${b})`
+  );
+
+  console.log(input);
+
+  return input;
+}
