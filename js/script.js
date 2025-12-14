@@ -27,11 +27,11 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     operatorNext: false,
     xtty: { active: false, exp: [], value: null },
     e: Math.E,
-    hasRoot: { status: false, root: null, value: null },
+    hasRoot: { active: false, root: null, value: null },
     yxroot: false,
     waitingForY: false,
     expCache: [],
-    specialFunction: { active: false, type: null },
+    specialFunction: { active: false, type: null, index: 0 },
   };
 
   simpleToggle.addEventListener("click", function () {
@@ -206,34 +206,26 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       updateScreen("", true);
     }
 
-    if (State.negativeFlag || State.operatorNext) {
-      if (State.waitingForY) {
-        State.expCache.push(num);
+    if (State.waitingForY) {
+      State.expCache.push(num);
 
-        let lastItem = State.expression.length - 1;
+      let lastItem = State.expression.length - 1;
 
-        // Position yroot to the left of the expression it realates to
-        if (State.expression[lastItem].includes("root")) {
-          if (State.expCache.length <= 1) {
-            State.expression.splice(lastItem, 0, State.expCache.join(""));
-          } else {
-            State.expression.splice(lastItem - 1, 1, State.expCache.join(""));
-          }
-        } else {
-          let offset = State.expression.length - (State.cache.length + 2);
+      // Position yroot to the left of the expression it realates to
 
-          if (State.expCache.length <= 1) {
-            State.expression.splice(offset, 0, State.expCache.join(""));
-          } else {
-            State.expression.splice(offset, 1, State.expCache.join(""));
-          }
-        }
+      let offset = State.expression.length - (State.cache.length + 3); // offset by "funname" + "(" + digits + ")". 4 items
 
-        State.hasRoot.root = parseFloat(State.expCache.join(""));
-        updateScreen(State.expression.join(""));
-        return;
+      if (State.expCache.length <= 1) {
+        State.expression.splice(offset, 0, State.expCache.join(""));
+      } else {
+        State.expression.splice(offset, 1, State.expCache.join(""));
       }
 
+      updateScreen(State.expression.join(""));
+      return;
+    }
+
+    if (State.negativeFlag || State.operatorNext) {
       State.operatorNext = false;
       State.negativeFlag = false; // set negative flag to false ( next number has not been negated)
       State.operator.push("multiply"); // add a "multiply" operator to the operators array
@@ -317,7 +309,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.xtty = { active: false, exp: [], value: null };
     }
 
-    if (State.hasRoot.status) {
+    if (State.hasRoot.active) {
       if (State.openBracket > 0) {
         State.openBracket -= 1; // reduce count of open brackets each time by 1
         State.expression.push(")"); // Close bracket automatically if operator is used
@@ -339,6 +331,15 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     if (State.specialFunction.active && State.openBracket > 0) {
       State.openBracket -= 1;
       State.expression.push(")");
+    }
+
+    if (State.specialFunction.active) {
+      State.expression.specialFunction = {
+        active: false,
+        type: null,
+        index: 0,
+        value: null,
+      };
     }
 
     State.negativeFlag = false;
