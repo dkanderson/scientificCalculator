@@ -1,4 +1,9 @@
-import { tokenize, toRPN, evaluateRPN } from "./expression_eval.js";
+import {
+  tokenize,
+  toRPN,
+  evaluateRPN,
+  normalizePercent,
+} from "./expression_eval.js";
 
 export function computeBinary(a, b, opKey) {
   const aN = Number(a);
@@ -63,7 +68,8 @@ export function calculate(numbers, operators) {
 }
 
 export function compute(expression) {
-  const tokens = tokenize(expression);
+  const normalizedExp = normalizePercent(expression);
+  const tokens = tokenize(normalizedExp);
   const rpn = toRPN(tokens);
   return evaluateRPN(rpn);
 }
