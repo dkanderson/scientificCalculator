@@ -132,14 +132,10 @@ function handleBrackets(func, State) {
     State.expression.push(")");
     updateScreen(State.expression.join(""));
 
-    if (State.hasRoot.status) {
-      if (State.yxroot) {
-        const yxrtButton = document.getElementById("yxrt");
-        yxrtButton.classList.add("active");
-        State.waitingForY = true;
-      }
-
-      State.hasRoot.value = parseFloat(State.cache.join(""));
+    if (State.yxroot) {
+      const yxrtButton = document.getElementById("yxrt");
+      yxrtButton.classList.add("active");
+      State.waitingForY = true;
     }
 
     State.operatorNext = true;
@@ -365,62 +361,11 @@ function handleOneoverx(State) {
 }
 
 function handleSquareroot(State) {
-  if (State.hasRoot.status) {
-    return;
-  }
-
-  State.hasRoot.status = true;
-  State.hasRoot.root = 2;
-
-  if (!State.cache.length) {
-    State.openBracket += 1;
-    State.expression.push("&radic;(");
-    updateScreen(State.expression.join(""));
-  } else {
-    console.log(State);
-    State.operatorNext = true;
-    if (!State.operatorOnce) {
-      State.hasRoot.value = parseFloat(State.cache.join(""));
-      let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
-      State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-      State.expression.push("&radic;(" + State.cache.join("") + ")");
-      updateScreen(State.expression.join(""));
-    } else {
-      State.hasRoot.value = parseFloat(State.cache.join(""));
-      State.openBracket += 1;
-      State.expression.push("&radic;(");
-      updateScreen(State.expression.join(""));
-    }
-  }
+  wrapFunction("&radic;", State);
 }
 
 function handleCuberoot(State) {
-  if (State.hasRoot.status) {
-    return;
-  }
-
-  State.hasRoot.status = true;
-  State.hasRoot.root = 3;
-
-  if (!State.cache.length) {
-    State.openBracket += 1;
-    State.expression.push("cbrt(");
-    updateScreen(State.expression.join(""));
-  } else {
-    State.operatorNext = true;
-    if (!State.operatorOnce) {
-      State.hasRoot.value = parseFloat(State.cache.join(""));
-      let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
-      State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-      State.expression.push("cbrt(" + State.cache.join("") + ")");
-      updateScreen(State.expression.join(""));
-    } else {
-      State.hasRoot.value = parseFloat(State.cache.join(""));
-      State.openBracket += 1;
-      State.expression.push("cbrt(");
-      updateScreen(State.expression.join(""));
-    }
-  }
+  wrapFunction("cbrt", State);
 }
 
 function handleYXroot(State) {
@@ -428,50 +373,61 @@ function handleYXroot(State) {
     return;
   }
 
-  const yxrootBtn = document.getElementById("yxrt"); // get DOM element for xtty button
-  yxrootBtn.classList.add("active");
-
   State.yxroot = true;
-  State.hasRoot.status = true;
-  State.hasRoot.root = 2;
-
-  if (!State.cache.length) {
-    State.openBracket += 1;
-    State.expression.push("root(");
-    updateScreen(State.expression.join(""));
-  } else {
-    State.operatorNext = true;
-    if (!State.operatorOnce) {
-      State.hasRoot.value = parseFloat(State.cache.join(""));
-      let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
-      State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-      State.expression.push("root(" + State.cache.join("") + ")");
-      State.waitingForY = true;
-      updateScreen(State.expression.join(""));
-    } else {
-      State.hasRoot.value = parseFloat(State.cache.join(""));
-      State.openBracket += 1;
-      State.expression.push("root(");
-      updateScreen(State.expression.join(""));
-    }
-  }
+  wrapFunction("root", State);
 }
 
 function handleLn(State) {
-  if (!State.cache.length) {
-    State.openBracket += 1;
-    State.expression.push("ln(");
-    State.specialFunction = { active: true, type: "ln" };
-    updateScreen(State.expression.join(""));
-  } else {
-    let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
-    State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-    State.expression.push("ln(" + State.cache.join("") + ")");
-    State.specialFunction = { active: true, type: "ln" };
-    updateScreen(State.expression.join(""));
-  }
+  wrapFunction("ln", State);
 }
 
-function handleLogten(State) {}
+function handleLogten(State) {
+  wrapFunction("log", State);
+}
+
+function wrapFunction(func, State) {
+  console.log("/---------------------------------------------");
+  console.log("Func: ", func);
+  console.log("Current: ", State.specialFunction);
+
+  let lastIndex = 0;
+
+  if (State.expression.length === 0 || State.operatorOnce) {
+    State.expression.push(func);
+    State.expression.push("(");
+    State.openBracket += 1;
+    updateScreen(State.expression.join(""));
+  } else if (State.expression.length && !State.specialFunction.active) {
+    lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
+    State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
+    State.expression.push(func);
+    State.expression.push("(");
+    if (State.cache.length !== 0) {
+      State.expression.push(...State.cache);
+      State.expression.push(")");
+      if (func === "root") {
+        State.waitingForY = true;
+        const yxrootBtn = document.getElementById("yxrt"); // get DOM element for xtty button
+        yxrootBtn.classList.add("active");
+      }
+    } else {
+      State.openBracket += 1;
+    }
+
+    updateScreen(State.expression.join(""));
+  } else if (State.specialFunction.active) {
+    lastIndex = State.specialFunction.index;
+    let funcStart = [func, "("];
+    State.expression.splice(lastIndex, 0, ...funcStart);
+    State.openBracket += 1;
+    updateScreen(State.expression.join(""));
+  }
+
+  State.specialFunction = {
+    active: true,
+    type: func,
+    index: lastIndex,
+  };
+}
 
 export default handleSpecialFunction;

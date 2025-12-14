@@ -52,6 +52,7 @@ project-folder/
 - Better Keyboard support
 - Add calculator icon to button for expanding calculator
 - ~~Use Shunting yard, tokens and RPN to improve logic~~
+- Add support for nested functions in UI
 
 ## License
 
