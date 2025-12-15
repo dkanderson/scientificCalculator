@@ -70,7 +70,19 @@ export function tokenize(input) {
 
       // classify
       if (
-        ["cbrt", "sqrt", "sin", "cos", "tan", "log", "ln", "exp"].includes(id)
+        [
+          "cbrt",
+          "sqrt",
+          "sin",
+          "cos",
+          "tan",
+          "log",
+          "sinh",
+          "cosh",
+          "tanh",
+          "ln",
+          "exp",
+        ].includes(id)
       ) {
         tokens.push({ type: "function", value: id });
       } else if (["pi", "e"].includes(id)) {
@@ -240,6 +252,9 @@ export function evaluateRPN(rpn) {
     sin: (x) => Math.sin(x),
     cos: (x) => Math.cos(x),
     tan: (x) => Math.tan(x),
+    sinh: (x) => Math.sinh(x),
+    cosh: (x) => Math.cosh(x),
+    tanh: (x) => Math.tanh(x),
     log: (x) => Math.log10(x),
     ln: (x) => Math.log(x),
     exp: (x) => Math.exp(x),
