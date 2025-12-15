@@ -209,8 +209,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     if (State.waitingForY) {
       State.expCache.push(num);
 
-      let lastItem = State.expression.length - 1;
-
       // Position yroot to the left of the expression it realates to
 
       let offset = State.expression.length - (State.cache.length + 3); // offset by "funname" + "(" + digits + ")". 4 items
@@ -309,18 +307,6 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.xtty = { active: false, exp: [], value: null };
     }
 
-    if (State.hasRoot.active) {
-      if (State.openBracket > 0) {
-        State.openBracket -= 1; // reduce count of open brackets each time by 1
-        State.expression.push(")"); // Close bracket automatically if operator is used
-        updateScreen(State.expression.join(""));
-      }
-
-      if (State.hasRoot.value === null) {
-        State.hasRoot.value = parseFloat(State.cache.join(""));
-      }
-    }
-
     if (State.xtty.active) {
       const xttyBtn = document.getElementById("xtty");
       xttyBtn.classList.remove("active");
@@ -353,7 +339,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     State.expression.push(operatorSymbol(op)); // convert operator to easily understood symbol and add it to the expression array
     updateScreen(State.expression.join("")); // update the screen with what is in the expression array
 
-    if (State.operator[State.operator.length - 1] === "equals") {
+    if (op === "equals") {
       // if the operator is the equals button
 
       let result = 0;
