@@ -1,5 +1,19 @@
 // Generate tokens
 
+const MAX_FACTORIAL = 170; // JS returns infinity beyond this
+
+function factorial(n) {
+  if (!Number.isInteger(n) || n < 0 || n > MAX_FACTORIAL) {
+    return "Error";
+  }
+
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+}
+
 export function tokenize(input) {
   const tokens = [];
   let i = 0;
@@ -79,7 +93,7 @@ export function tokenize(input) {
     }
 
     // ----- OPERATORS
-    if ("+-*/%^".includes(ch)) {
+    if ("+-*/%^!".includes(ch)) {
       // unary minus detection:
       const prev = tokens[tokens.length - 1];
       const isUnary =
@@ -109,6 +123,7 @@ export function toRPN(tokens) {
 
   const PRECEDENCE = {
     "unary-": 6,
+    "!": 6,
     "^": 5,
     root: 5,
     "*": 4,
@@ -140,6 +155,12 @@ export function toRPN(tokens) {
     // ----- FUNCTIONS
     if (token.type === "function") {
       stack.push(token);
+      continue;
+    }
+
+    // POSTFIX unary operator (factorial)
+    if (token.type === "operator" && token.value === "!") {
+      output.push(token);
       continue;
     }
 
@@ -233,6 +254,7 @@ export function evaluateRPN(rpn) {
     "^": (a, b) => Math.pow(a, b),
     root: (a, b) => Math.pow(b, 1 / a),
     "unary-": (a) => -a,
+    "!": (a) => factorial(a),
   };
 
   for (const token of rpn) {
@@ -261,6 +283,14 @@ export function evaluateRPN(rpn) {
     // ----- OPERATOR
     if (token.type === "operator") {
       const op = token.value;
+
+      // factorial
+      if (op === "!") {
+        const a = stack.pop();
+        if (a === undefined) throw new Error("Missing operand for factorial");
+        stack.push(factorial(a));
+        continue;
+      }
 
       // Unary operator (1 argument)
       if (op === "unary-") {
