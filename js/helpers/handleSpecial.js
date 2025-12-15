@@ -75,6 +75,54 @@ function handleSpecialFunction(func, State, button) {
       handleLogten(State);
       break;
 
+    case "factorial":
+      handleFactorial(State);
+      break;
+
+    case "sine":
+      handleSine(State);
+      break;
+
+    case "cosine":
+      handleCosine(State);
+      break;
+
+    case "tangent":
+      handleTangent(State);
+      break;
+
+    case "e":
+      handlee(State);
+      break;
+
+    case "EE":
+      handleEE(State);
+      break;
+
+    case "rad":
+      handleRad(State);
+      break;
+
+    case "sine-h":
+      handleSineH(State);
+      break;
+
+    case "cosine-h":
+      handleCosineH(State);
+      break;
+
+    case "tangent-h":
+      handleTangentH(State);
+      break;
+
+    case "pi":
+      handlePi(State);
+      break;
+
+    case "random":
+      handleRandom(State);
+      break;
+
     default:
       console.error("Error: invalid function or feature not installed");
   }
@@ -429,5 +477,66 @@ function wrapFunction(func, State) {
     index: lastIndex,
   };
 }
+
+function handleFactorial(State) {
+  let lastIndex = 0 || State.specialFunction.index;
+
+  if (!State.specialFunction.index && State.expression.length - 1 > 0) {
+    lastIndex = State.expression.length - 1;
+  }
+
+  if (!State.expression.length || State.operatorOnce) {
+    State.expression.push(...["0", "!"]);
+  } else {
+    if (!State.specialFunction.active) {
+      State.expression.push("!");
+    } else {
+      State.expression.splice(State.specialFunction.index, 0, "(");
+      State.expression.push(...[")", "!"]);
+    }
+  }
+
+  State.specialFunction = {
+    active: true,
+    type: "factorial",
+    index: lastIndex,
+  };
+
+  updateScreen(State.expression.join(""));
+}
+
+function handleSine(State) {
+  wrapFunction("sin", State);
+}
+
+function handleCosine(State) {
+  wrapFunction("cos", State);
+}
+
+function handleTangent(State) {
+  wrapFunction("tan", State);
+}
+
+function handlee(State) {}
+
+function handleEE(State) {}
+
+function handleRad(State) {}
+
+function handleSineH(State) {
+  wrapFunction("sinh", State);
+}
+
+function handleCosineH(State) {
+  wrapFunction("cosh", State);
+}
+
+function handleTangentH(State) {
+  wrapFunction("tanh", State);
+}
+
+function handlePi(State) {}
+
+function handleRandom(State) {}
 
 export default handleSpecialFunction;
