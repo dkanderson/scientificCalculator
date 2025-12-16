@@ -517,9 +517,35 @@ function handleTangent(State) {
   wrapFunction("tan", State);
 }
 
-function handlee(State) {}
+function handlee(State) {
+  const op = operatorSymbol("multiply");
 
-function handleEE(State) {}
+  if (!State.expression.length) {
+    State.expression.push("e");
+  } else {
+    if (State.operatorNext || State.cache.length) {
+      State.expression.push(...[op, "e"]);
+    } else {
+      State.expression.push("e");
+    }
+  }
+
+  State.operatorOnce = false;
+  State.operatorNext = true;
+  updateScreen(State.expression.join(""));
+}
+
+function handleEE(State) {
+  State.EE = true;
+  State.operatorOnce = true;
+
+  if (State.expression.length === 0 || State.expression.operatorOnce) {
+    State.expression.push(...["0", "EE"]);
+  } else {
+    State.expression.push("EE");
+  }
+  updateScreen(State.expression.join(""));
+}
 
 function handleRad(State) {}
 
@@ -535,7 +561,25 @@ function handleTangentH(State) {
   wrapFunction("tanh", State);
 }
 
-function handlePi(State) {}
+function handlePi(State) {
+  let pi = "&pi;";
+
+  const op = operatorSymbol("multiply");
+
+  if (!State.expression.length) {
+    State.expression.push(pi);
+  } else {
+    if (State.operatorNext || State.cache.length) {
+      State.expression.push(...[op, pi]);
+    } else {
+      State.expression.push(pi);
+    }
+  }
+
+  State.operatorOnce = false;
+  State.operatorNext = true;
+  updateScreen(State.expression.join(""));
+}
 
 function handleRandom(State) {}
 
