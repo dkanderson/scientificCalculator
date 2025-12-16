@@ -39,6 +39,7 @@ export function tokenize(input) {
     if (isDigit(ch) || ch === ".") {
       let numStr = "";
       let hasDot = false;
+      let next = i + 1;
 
       // integer or decimal
       while (isDigit(input[i]) || (!hasDot && input[i] === ".")) {
@@ -47,7 +48,10 @@ export function tokenize(input) {
       }
 
       // exponent notation: 1e3, 2.1e-4
-      if (input[i] && (input[i] === "e" || input[i] === "E")) {
+      if (
+        input[i] &&
+        (input[i] === "e" || (input[i] === "E" && input[next] !== "E"))
+      ) {
         numStr += input[i++];
         if (input[i] === "+" || input[i] === "-") {
           numStr += input[i++];
@@ -64,7 +68,7 @@ export function tokenize(input) {
     // ----- IDENTIFIER (functions, constants)
     if (isLetter(ch)) {
       let id = "";
-      while (isLetter(input[i])) {
+      while (input[i] && isLetter(input[i])) {
         id += input[i++];
       }
 
@@ -90,6 +94,9 @@ export function tokenize(input) {
       } else if (id === "root") {
         //treat root like a binary operator
         tokens.push({ type: "operator", value: "root" });
+      } else if (id === "EE") {
+        //treat EE like a binary operator
+        tokens.push({ type: "operator", value: "EE" });
       } else {
         throw new Error("Unknown identifier: " + id);
       }
@@ -138,6 +145,7 @@ export function toRPN(tokens) {
     "!": 6,
     "^": 5,
     root: 5,
+    EE: 5,
     "*": 4,
     "/": 4,
     "%": 4,
@@ -268,6 +276,7 @@ export function evaluateRPN(rpn) {
     "%": (a, b) => a % b,
     "^": (a, b) => Math.pow(a, b),
     root: (a, b) => Math.pow(b, 1 / a),
+    EE: (a, b) => a * Math.pow(10, b),
     "unary-": (a) => -a,
     "!": (a) => factorial(a),
   };
