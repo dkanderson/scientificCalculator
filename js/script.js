@@ -25,6 +25,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     memory: null,
     hasExp: [],
     operatorNext: false,
+    EE: false,
     xtty: { active: false, exp: [], value: null },
     e: Math.E,
     hasRoot: { active: false, root: null, value: null },
@@ -126,23 +127,8 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     switch (sfunc) {
       case "cancel":
         // Reset all values when then AC button is pressed
-        State.cache = [];
-        State.expression = [];
-        State.operator = [];
-        State.inputStop = false;
-        State.decimalFlag = false;
-        State.negativeFlag = false;
-        State.operatorOnce = false;
-        State.equated = false;
-        State.percentage = false;
-        State.openBracket = 0;
-        State.hasBrackets = false;
-        State.hasExp = [];
-        State.xtty = { active: false, exp: [], value: null };
-        State.operatorNext = false;
-        State.hasRoot = { status: false, root: null, value: null };
-        State.yxroot = false;
-        State.waitingForY = false;
+        resetAll();
+
         updateScreen("0");
         updateScreen("", true);
         const yxrtButton = document.getElementById("yxrt");
@@ -259,7 +245,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.expression = [];
     }
 
-    State.percentage = false;
+    State.EE = false;
     State.operatorOnce = false; // reset operator once flag ( makes sure there are no duplicate operators)
     State.cache.push(num); // store each number into an array
     State.expression.push(num); // store each number into the expression array
@@ -385,5 +371,26 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.expression.push("."); // add the decimal to the number cache
     }
     updateScreen(State.expression.join("")); // update the screen with the contents of the cahce
+  }
+
+  function resetAll() {
+    State.cache = [];
+    State.expression = [];
+    State.operator = [];
+    State.inputStop = false;
+    State.decimalFlag = false;
+    State.negativeFlag = false;
+    State.operatorOnce = false;
+    State.equated = false;
+    State.percentage = false;
+    State.openBracket = 0;
+    State.hasBrackets = false;
+    State.hasExp = [];
+    State.xtty = { active: false, exp: [], value: null };
+    State.operatorNext = false;
+    State.yxroot = false;
+    State.waitingForY = false;
+    State.specialFunction = {};
+    State.EE = false;
   }
 })();
