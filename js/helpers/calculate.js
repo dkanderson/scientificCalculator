@@ -81,7 +81,8 @@ export function cleanExp(exp) {
     .replaceAll("&divide;", "/")
     .replaceAll("&#43;", "+")
     .replaceAll("&minus;", "-")
-    .replaceAll("&radic;", "sqrt");
+    .replaceAll("&radic;", "sqrt")
+    .replaceAll("&pi;", "pi");
 
   return validExp;
 }
