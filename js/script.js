@@ -22,6 +22,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     percentage: false,
     openBracket: 0,
     hasBrackets: false,
+    secondToggle: false,
     memory: null,
     hasExp: [],
     operatorNext: false,
@@ -31,6 +32,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     hasRoot: { active: false, root: null, value: null },
     yxroot: false,
     waitingForY: false,
+    waitingForLogY: false,
     expCache: [],
     specialFunction: { active: false, type: null, index: 0 },
   };
@@ -182,27 +184,42 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
   }
 
   function handleNumber(num) {
-    if (State.equated) {
-      // reset
-      State.cache = [];
-      State.expression = [];
-      State.operator = [];
-      State.equated = false;
-      updateScreen("");
-      updateScreen("", true);
-    }
-
     if (State.waitingForY) {
       State.expCache.push(num);
 
       // Position yroot to the left of the expression it realates to
 
-      let offset = State.expression.length - (State.cache.length + 3); // offset by "funname" + "(" + digits + ")". 4 items
+      let offset = State.expression.length - (State.cache.length + 3); // offset by "funname" + "(" + digits + ")". 3 items plus number of digits
 
       if (State.expCache.length <= 1) {
         State.expression.splice(offset, 0, State.expCache.join(""));
       } else {
         State.expression.splice(offset, 1, State.expCache.join(""));
+      }
+
+      updateScreen(State.expression.join(""));
+      return;
+    }
+
+    if (State.waitingForLogY) {
+      State.expCache.push(num);
+
+      let offset = State.expression.length - (State.cache.length + 2);
+
+      if (State.expCache.length <= 1) {
+        State.expression.splice(
+          offset,
+          0,
+          "<sub>" + State.expCache.join("") + "</sub>"
+        );
+      } else {
+        console.log(State);
+        console.log("offset: ", offset);
+        State.expression.splice(
+          offset - 1,
+          1,
+          "<sub>" + State.expCache.join("") + "</sub>"
+        );
       }
 
       updateScreen(State.expression.join(""));
@@ -268,6 +285,8 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       yxrootBtn.classList.remove("active");
     }
 
+    if (State.waitingForLogY) State.waitingForLogY = false;
+
     if (
       !State.cache.length === 0 &&
       State.expression.length === 0 &&
@@ -318,12 +337,10 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     State.operatorNext = false;
     State.operatorOnce = true; //set operator once flag to true (operator button has been pressed once and no numbers have been entered)
     State.equated = false;
+    State.expCache = [];
 
     State.cache = []; // reset the cache
     State.decimalFlag = false; // set the decimal flag to false (decimals only once)
-    State.operator.push(op); // store the operator in an array
-    State.expression.push(operatorSymbol(op)); // convert operator to easily understood symbol and add it to the expression array
-    updateScreen(State.expression.join("")); // update the screen with what is in the expression array
 
     if (op === "equals") {
       // if the operator is the equals button
@@ -343,17 +360,23 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       State.hasBrackets = false;
 
       // reset
-      State.operator = [];
+      //State.operator = []; // TODO: remove references (no longer relevant)
       State.cache = [];
+      State.expression = []; // reset expression array
 
-      State.equated = true;
       State.cache.push(result.toString()); // update cache with the result
       updateScreen(State.expression.join(""), true); // move the expression to secondary display above and
       updateScreen(result); // display the result of the expression below
       State.operatorOnce = false; // reset operator once
-      State.expression = []; // reset expression array
+
+      State.cache.push(result.toString());
       State.expression.push(result.toString()); // the result becomes the new expression
+      return;
     }
+
+    State.operator.push(op); // store the operator in an array
+    State.expression.push(operatorSymbol(op)); // convert operator to easily understood symbol and add it to the expression array
+    updateScreen(State.expression.join("")); // update the screen with what is in the expression array
   }
 
   function handleDecimal() {
@@ -389,7 +412,9 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     State.xtty = { active: false, exp: [], value: null };
     State.operatorNext = false;
     State.yxroot = false;
+    State.expCache = [];
     State.waitingForY = false;
+    State.waitingForLogY = false;
     State.specialFunction = {};
     State.EE = false;
   }
