@@ -80,10 +80,18 @@ export function tokenize(input) {
           "sin",
           "cos",
           "tan",
-          "log",
           "sinh",
           "cosh",
           "tanh",
+          "asin",
+          "acos",
+          "atan",
+          "asinh",
+          "acosh",
+          "atanh",
+          "log",
+          "logII",
+          "logy",
           "ln",
           "exp",
         ].includes(id)
@@ -107,6 +115,13 @@ export function tokenize(input) {
     // ----- PARENTHESES
     if (ch === "(" || ch === ")") {
       tokens.push({ type: "paren", value: ch });
+      i++;
+      continue;
+    }
+
+    // ----- COMMA (function argument separator)
+    if (ch === ",") {
+      tokens.push({ type: "comma" });
       i++;
       continue;
     }
@@ -160,6 +175,9 @@ export function toRPN(tokens) {
   };
 
   for (const token of tokens) {
+    console.log("stack: ", stack);
+    console.log("output: ", output);
+
     // ----- NUMBERS
     if (token.type === "number") {
       output.push(token);
@@ -181,6 +199,19 @@ export function toRPN(tokens) {
     // POSTFIX unary operator (factorial)
     if (token.type === "operator" && token.value === "!") {
       output.push(token);
+      continue;
+    }
+
+    // ----- COMMA
+    if (token.type === "comma") {
+      while (stack.length && stack[stack.length - 1].type !== "paren") {
+        output.push(stack.pop());
+      }
+
+      if (!stack.length) {
+        throw new Error("Misplaced comma or mismatched parentheses");
+      }
+
       continue;
     }
 
@@ -263,9 +294,20 @@ export function evaluateRPN(rpn) {
     sinh: (x) => Math.sinh(x),
     cosh: (x) => Math.cosh(x),
     tanh: (x) => Math.tanh(x),
+    asin: (x) => Math.asin(x),
+    acos: (x) => Math.acos(x),
+    atan: (x) => Math.atan(x),
+    asinh: (x) => Math.asinh(x),
+    acosh: (x) => Math.acosh(x),
+    atanh: (x) => Math.atanh(x),
     log: (x) => Math.log10(x),
+    logII: (x) => Math.log2(x),
     ln: (x) => Math.log(x),
     exp: (x) => Math.exp(x),
+    logy: (x, y) => {
+      if (x <= 0 || y <= 0 || y === 1) return "Error";
+      return Math.log(x) / Math.log(y);
+    },
   };
 
   const OPERATORS = {
@@ -296,11 +338,22 @@ export function evaluateRPN(rpn) {
 
     // ----- FUNCTION
     if (token.type === "function") {
-      const a = stack.pop();
-      if (a === undefined) {
-        throw new Error("Missing argument for function " + token.value);
+      const fn = token.value;
+
+      if (fn === "logy") {
+        const b = stack.pop();
+        const a = stack.pop();
+        if (a === undefined || b === undefined) {
+          throw new Error("Missing arguments for " + fn);
+        }
+        stack.push(FUNCTIONS[fn](a, b));
+      } else {
+        const a = stack.pop();
+        if (a === undefined) {
+          throw new Error("Missing argument for " + fn);
+        }
+        stack.push(FUNCTIONS[fn](a));
       }
-      stack.push(FUNCTIONS[token.value](a));
       continue;
     }
 
