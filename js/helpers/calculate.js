@@ -75,6 +75,8 @@ export function compute(expression) {
 }
 
 export function cleanExp(exp) {
+  const regex = /log<sub>(\d+(\.\d+)?)\s*<\/sub>\(\s*([^()]+)\s*\)/g;
+
   // Replace visual operators with valid operators
   let validExp = exp
     .replaceAll("&times;", "*")
@@ -82,7 +84,8 @@ export function cleanExp(exp) {
     .replaceAll("&#43;", "+")
     .replaceAll("&minus;", "-")
     .replaceAll("&radic;", "sqrt")
-    .replaceAll("&pi;", "pi");
+    .replaceAll("&pi;", "pi")
+    .replaceAll(regex, (_, base, __, arg) => `logy(${arg},${base})`); // clean logy input
 
   return validExp;
 }
