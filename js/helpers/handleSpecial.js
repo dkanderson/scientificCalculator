@@ -186,6 +186,10 @@ function handleBrackets(func, State) {
       State.waitingForY = true;
     }
 
+    if (State.logy) {
+      State.waitingForLogY = true;
+    }
+
     State.operatorNext = true;
   }
 }
@@ -332,6 +336,9 @@ function handleXcubed(State) {
 
 function handleXtty(State) {
   if (State.xtty.active) {
+    State.xtty.active = false;
+    const xttyBtn = document.getElementById("xtty"); // get DOM element for xtty button
+    xttyBtn.classList.remove("active"); // set class to active (highlight)
     return; // if the button is already active do nothing
   }
 
@@ -344,7 +351,6 @@ function handleXtty(State) {
   }
 
   State.xtty.active = true; // set object properties active true and
-  State.xtty.value = State.cache.join(""); // value is set to the value stored in cache joined as a string
 }
 
 function handleEttx(State) {
@@ -408,30 +414,7 @@ function handleOneoverx(State) {
   }
 }
 
-function handleSquareroot(State) {
-  wrapFunction("&radic;", State);
-}
-
-function handleCuberoot(State) {
-  wrapFunction("cbrt", State);
-}
-
-function handleYXroot(State) {
-  if (State.yxroot) {
-    return;
-  }
-
-  State.yxroot = true;
-  wrapFunction("root", State);
-}
-
-function handleLn(State) {
-  wrapFunction("ln", State);
-}
-
-function handleLogten(State) {
-  wrapFunction("log", State);
-}
+// Reusable function to manage input for functional inputs
 
 function wrapFunction(func, State) {
   console.log("/---------------------------------------------");
@@ -439,6 +422,7 @@ function wrapFunction(func, State) {
   console.log("Current: ", State.specialFunction);
 
   let lastIndex = 0;
+  State.expCache = [];
 
   if (State.expression.length === 0 || State.operatorOnce) {
     State.expression.push(func);
@@ -457,6 +441,8 @@ function wrapFunction(func, State) {
         State.waitingForY = true;
         const yxrootBtn = document.getElementById("yxrt"); // get DOM element for xtty button
         yxrootBtn.classList.add("active");
+      } else if (func === "log" && State.logy) {
+        State.waitingForLogY = true;
       }
     } else {
       State.openBracket += 1;
@@ -476,6 +462,43 @@ function wrapFunction(func, State) {
     type: func,
     index: lastIndex,
   };
+}
+
+// End Wrap Funtion ----------------------------------------------------------------------
+
+function handleSquareroot(State) {
+  wrapFunction("&radic;", State);
+}
+
+function handleCuberoot(State) {
+  wrapFunction("cbrt", State);
+}
+
+function handleYXroot(State) {
+  if (State.yxroot) {
+    return;
+  }
+
+  State.yxroot = true;
+  wrapFunction("root", State);
+}
+
+function handleLn(State) {
+  if (!State.secondToggle) {
+    wrapFunction("ln", State);
+  } else {
+    State.logy = true;
+    wrapFunction("log", State);
+  }
+}
+
+function handleLogten(State) {
+  if (!State.secondToggle) {
+    wrapFunction("log", State);
+  } else {
+    // log2
+    wrapFunction("logII", State);
+  }
 }
 
 function handleFactorial(State) {
@@ -506,15 +529,27 @@ function handleFactorial(State) {
 }
 
 function handleSine(State) {
-  wrapFunction("sin", State);
+  if (!State.secondToggle) {
+    wrapFunction("sin", State);
+  } else {
+    wrapFunction("asin", State);
+  }
 }
 
 function handleCosine(State) {
-  wrapFunction("cos", State);
+  if (!State.secondToggle) {
+    wrapFunction("cos", State);
+  } else {
+    wrapFunction("acos", State);
+  }
 }
 
 function handleTangent(State) {
-  wrapFunction("tan", State);
+  if (!State.secondToggle) {
+    wrapFunction("tan", State);
+  } else {
+    wrapFunction("atan", State);
+  }
 }
 
 function handlee(State) {
@@ -530,6 +565,7 @@ function handlee(State) {
     }
   }
 
+  State.cache.push("e");
   State.operatorOnce = false;
   State.operatorNext = true;
   updateScreen(State.expression.join(""));
@@ -550,15 +586,27 @@ function handleEE(State) {
 function handleRad(State) {}
 
 function handleSineH(State) {
-  wrapFunction("sinh", State);
+  if (!State.secondToggle) {
+    wrapFunction("sinh", State);
+  } else {
+    wrapFunction("asinh", State);
+  }
 }
 
 function handleCosineH(State) {
-  wrapFunction("cosh", State);
+  if (!State.secondToggle) {
+    wrapFunction("cosh", State);
+  } else {
+    wrapFunction("acosh", State);
+  }
 }
 
 function handleTangentH(State) {
-  wrapFunction("tanh", State);
+  if (!State.secondToggle) {
+    wrapFunction("tanh", State);
+  } else {
+    wrapFunction("atanh", State);
+  }
 }
 
 function handlePi(State) {
@@ -576,11 +624,30 @@ function handlePi(State) {
     }
   }
 
+  State.cache.push(pi);
   State.operatorOnce = false;
   State.operatorNext = true;
   updateScreen(State.expression.join(""));
 }
 
-function handleRandom(State) {}
+function handleRandom(State) {
+  const rand = Math.random();
+
+  const op = operatorSymbol("multiply");
+
+  if (!State.expression.length) {
+    State.expression.push(rand);
+  } else {
+    if (State.operatorNext || State.cache.length) {
+      State.expression.push(...[op, rand]);
+    } else {
+      State.expression.push(rand);
+    }
+  }
+  State.cache.push(rand);
+  State.operatorOnce = false;
+  State.operatorNext = true;
+  updateScreen(State.expression.join(""));
+}
 
 export default handleSpecialFunction;
