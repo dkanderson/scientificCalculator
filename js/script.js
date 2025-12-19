@@ -2,6 +2,7 @@ import { compute, cleanExp } from "./helpers/calculate.js";
 import handleSpecialFunction from "./helpers/handleSpecial.js";
 import handleKeyPress from "./helpers/handle_keypress.js";
 import { operatorSymbol } from "./helpers/operator_symbol.js";
+import { toggleActive } from "./helpers/utility.js";
 
 (() => {
   // get dom elements
@@ -27,6 +28,8 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     hasExp: [],
     operatorNext: false,
     EE: false,
+    yx: false,
+    mode: "DEG",
     xtty: { active: false, exp: [], value: null },
     e: Math.E,
     hasRoot: { active: false, root: null, value: null },
@@ -194,7 +197,11 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       if (State.expCache.length <= 1) {
         State.expression.splice(offset, 0, State.expCache.join(""));
       } else {
-        State.expression.splice(offset, 1, State.expCache.join(""));
+        State.expression.splice(
+          State.yx ? offset - 1 : offset,
+          1,
+          State.expCache.join("")
+        );
       }
 
       updateScreen(State.expression.join(""));
@@ -275,6 +282,11 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
       return;
     }
 
+    if (State.yx) {
+      toggleActive("ettx");
+      State.yx = false;
+    }
+
     if (State.waitingForY) {
       State.waitingForY = false;
       State.operatorNext = false;
@@ -299,8 +311,7 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
     }
 
     if (State.xtty.active) {
-      const xttyBtn = document.getElementById("xtty"); // get DOM element for xtty button
-      xttyBtn.classList.remove("active");
+      toggleActive("xtty");
 
       // push the completed exponent object if there is one
       if (State.xtty.exp.length) {
@@ -356,20 +367,20 @@ import { operatorSymbol } from "./helpers/operator_symbol.js";
 
       let validExp = cleanExp(State.expression.join(""));
 
-      result = compute(validExp);
+      result = compute(validExp, State.mode);
       State.hasBrackets = false;
 
       // reset
       //State.operator = []; // TODO: remove references (no longer relevant)
       State.cache = [];
-      State.expression = []; // reset expression array
 
       State.cache.push(result.toString()); // update cache with the result
       updateScreen(State.expression.join(""), true); // move the expression to secondary display above and
+      State.expression = []; // reset expression array
       updateScreen(result); // display the result of the expression below
-      State.operatorOnce = false; // reset operator once
 
-      State.cache.push(result.toString());
+      State.operatorOnce = false; // reset operator once
+      State.operatorNext = true;
       State.expression.push(result.toString()); // the result becomes the new expression
       return;
     }
