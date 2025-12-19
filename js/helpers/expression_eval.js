@@ -277,7 +277,7 @@ export function toRPN(tokens) {
 
 // Evaluate RPN
 
-export function evaluateRPN(rpn) {
+export function evaluateRPN(rpn, mode = "DEG") {
   const stack = [];
 
   const CONSTANTS = {
@@ -285,21 +285,29 @@ export function evaluateRPN(rpn) {
     e: Math.E,
   };
 
+  function angleMode(mode, x) {
+    if (mode === "RAD") {
+      return x;
+    } else {
+      return x * (Math.PI / 180);
+    }
+  }
+
   const FUNCTIONS = {
     sqrt: (x) => Math.sqrt(x),
     cbrt: (x) => Math.cbrt(x),
-    sin: (x) => Math.sin(x),
-    cos: (x) => Math.cos(x),
-    tan: (x) => Math.tan(x),
-    sinh: (x) => Math.sinh(x),
-    cosh: (x) => Math.cosh(x),
-    tanh: (x) => Math.tanh(x),
-    asin: (x) => Math.asin(x),
-    acos: (x) => Math.acos(x),
-    atan: (x) => Math.atan(x),
-    asinh: (x) => Math.asinh(x),
-    acosh: (x) => Math.acosh(x),
-    atanh: (x) => Math.atanh(x),
+    sin: (x) => Math.sin(angleMode(mode, x)),
+    cos: (x) => Math.cos(angleMode(mode, x)),
+    tan: (x) => Math.tan(angleMode(mode, x)),
+    sinh: (x) => Math.sinh(angleMode(mode, x)),
+    cosh: (x) => Math.cosh(angleMode(mode, x)),
+    tanh: (x) => Math.tanh(angleMode(mode, x)),
+    asin: (x) => Math.asin(angleMode(mode, x)),
+    acos: (x) => Math.acos(angleMode(mode, x)),
+    atan: (x) => Math.atan(angleMode(mode, x)),
+    asinh: (x) => Math.asinh(angleMode(mode, x)),
+    acosh: (x) => Math.acosh(angleMode(mode, x)),
+    atanh: (x) => Math.atanh(angleMode(mode, x)),
     log: (x) => Math.log10(x),
     logII: (x) => Math.log2(x),
     ln: (x) => Math.log(x),
