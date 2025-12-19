@@ -67,11 +67,11 @@ export function calculate(numbers, operators) {
   return result;
 }
 
-export function compute(expression) {
+export function compute(expression, mode = "DEG") {
   const normalizedExp = normalizePercent(expression);
   const tokens = tokenize(normalizedExp);
   const rpn = toRPN(tokens);
-  return evaluateRPN(rpn);
+  return evaluateRPN(rpn, mode);
 }
 
 export function cleanExp(exp) {
