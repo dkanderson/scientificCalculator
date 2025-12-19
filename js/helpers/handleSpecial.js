@@ -1,5 +1,6 @@
 import { operatorSymbol } from "./operator_symbol.js";
 import { compute, cleanExp } from "./calculate.js";
+import { toggleActive } from "./utility.js";
 
 function handleSpecialFunction(func, State, button) {
   switch (func) {
@@ -354,44 +355,65 @@ function handleXtty(State) {
 }
 
 function handleEttx(State) {
-  if (State.cache.length) {
-    State.hasExp.push({
-      exp: parseFloat(State.cache.join("")),
-      value: State.e,
-    }); // Set the exponential object
-    // console.log("Expression: ", State.expression);
-    // console.log("Cache: ", State.cache);
-    let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
-    State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-    State.expression.push("e^(" + State.cache.join("") + ")"); // Put the number into exponential notation
-    updateScreen(State.expression.join(""));
+  if (!State.secondToggle) {
+    if (State.cache.length) {
+      State.hasExp.push({
+        exp: parseFloat(State.cache.join("")),
+        value: State.e,
+      }); // Set the exponential object
+      // console.log("Expression: ", State.expression);
+      // console.log("Cache: ", State.cache);
+      let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
+      State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
+      State.expression.push("e^(" + State.cache.join("") + ")"); // Put the number into exponential notation
+      updateScreen(State.expression.join(""));
+    } else {
+      State.hasExp.push({ exp: 0, value: State.e }); // Set the exponential object default to zero if cache is empty
+
+      let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
+      State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
+      State.expression.push("e^(0)"); // Put the number into exponential notation default to zero if cache is empty
+      updateScreen(State.expression.join(""));
+    }
+
+    State.operatorNext = true;
   } else {
-    State.hasExp.push({ exp: 0, value: State.e }); // Set the exponential object default to zero if cache is empty
+    if (State.specialFunction.active) return;
 
-    let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
-    State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-    State.expression.push("e^(0)"); // Put the number into exponential notation default to zero if cache is empty
-    updateScreen(State.expression.join(""));
+    const ettxBtn = document.getElementById("ettx");
+    ettxBtn.classList.toggle("active");
+    State.yx = !State.yx;
+
+    if (State.yx) {
+      if (State.cache.length === 0) {
+        State.expression.push(...["^", "(", "0", ")"]);
+        updateScreen(State.expression.join(""));
+      } else {
+        let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
+        State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
+        State.expression.push(...["^", "(", State.cache.join(""), ")"]);
+        updateScreen(State.expression.join(""));
+      }
+      State.waitingForY = true;
+    }
   }
-
-  State.operatorNext = true;
 }
 
 function handleTenttx(State) {
+  const val = State.secondToggle ? 2 : 10;
+
   if (State.cache.length) {
-    State.hasExp.push({ exp: parseFloat(State.cache.join("")), value: 10 }); // Set the exponential object
+    State.hasExp.push({ exp: parseFloat(State.cache.join("")), value: val }); // Set the exponential object
     // console.log("Expression: ", State.expression);
     // console.log("Cache: ", State.cache);
     let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
     State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-    State.expression.push("10^(" + State.cache.join("") + ")"); // Put the number into exponential notation
+    State.expression.push(...[val, "^", "(", State.cache.join(""), ")"]); // Put the number into exponential notation
     updateScreen(State.expression.join(""));
   } else {
-    State.hasExp.push({ exp: 0, value: 10 }); // Set the exponential object default to zero if cache is empty
-
     let lastIndex = State.expression.length - State.cache.length; // Get the start index of the number entered
     State.expression.splice(lastIndex, State.cache.length); // Remove the entered number from the expressioin
-    State.expression.push("10^(0)"); // Put the number into exponential notation default to zero if cache is empty
+    State.expression.push(...[val, "^", "(", "0", ")"]); // Put the number into exponential notation default to zero if cache is empty
     updateScreen(State.expression.join(""));
   }
 
@@ -435,6 +457,7 @@ function wrapFunction(func, State) {
     State.expression.push(func);
     State.expression.push("(");
     if (State.cache.length !== 0) {
+      console.log(State);
       State.expression.push(...State.cache);
       State.expression.push(")");
       if (func === "root") {
@@ -583,7 +606,16 @@ function handleEE(State) {
   updateScreen(State.expression.join(""));
 }
 
-function handleRad(State) {}
+function handleRad(State) {
+  toggleActive("rad", "radians");
+  toggleActive("rad-toggle");
+
+  if (State.mode === "DEG") {
+    State.mode = "RAD";
+  } else {
+    State.mode = "DEG";
+  }
+}
 
 function handleSineH(State) {
   if (!State.secondToggle) {
