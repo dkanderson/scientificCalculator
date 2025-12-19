@@ -46,7 +46,7 @@ project-folder/
 
 ## Future Improvements
 
-- Add scientific functions (sin, cos, tan, log, rad, etc)
+- ~~Add scientific functions (sin, cos, tan, log, rad, etc)~~
 - Improved mobile layout
 - Dark/light theme toggle
 - Better Keyboard support
