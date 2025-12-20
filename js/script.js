@@ -2,7 +2,7 @@ import { compute, cleanExp } from "./helpers/calculate.js";
 import handleSpecialFunction from "./helpers/handleSpecial.js";
 import handleKeyPress from "./helpers/handle_keypress.js";
 import { operatorSymbol } from "./helpers/operator_symbol.js";
-import { toggleActive } from "./helpers/utility.js";
+import { toggleActive, subExprLength } from "./helpers/utility.js";
 
 (() => {
   // get dom elements
@@ -142,29 +142,24 @@ import { toggleActive } from "./helpers/utility.js";
       case "pos-neg":
         if (State.expression.length && !State.negativeFlag) {
           // --if there is an expression and no negative flag has been set
-          const pos = State.expression.length - State.cache.length; // calculate offset position in the array to insert bracket and neg symbol
-          State.cache.unshift("-"); // add neg symbol to the cache
+          const pos = subExprLength(State.expression); // calculate offset position in the array to insert bracket and neg symbol
+          console.log(pos);
 
-          State.expression.splice(pos, 0, "(-"); // surround last operand with parenthesis and a negative symbol (front)
+          State.expression.splice(pos.index + 1, 0, ...["(", "-"]); // surround last operand with parenthesis and a negative symbol (front)
           State.expression.push(")"); // (back)
           updateScreen(State.expression.join("")); // update screen with the changes
           State.negativeFlag = true; // set the negative flag to true (a number has been negated)
-          console.log(State.cache);
         } else if (State.expression.length && State.negativeFlag) {
           // --if there is an expression and the negative flag has been set
-          const pos = State.expression.length - (State.cache.length + 1); // calculate the offset position of the parenthesis for removal
+          const pos = subExprLength(State.expression); // calculate the offset position of the parenthesis for removal
           State.cache.shift(); // remove negative symbol from the cache
 
-          State.expression.splice(pos, 1); // remove left bracket and neg from expression array
+          State.expression.splice(pos.index + 1, 2); // remove left bracket and neg from expression array
           State.expression.pop(); // remove right bracket from expression array
           updateScreen(State.expression.join("")); // update screen with changes
           State.negativeFlag = false; // set the negative flag to false
-
-          console.log("Expression: ", State.expression);
-          console.log("Cache: ", State.cache);
         }
 
-        console.log("pos-neg");
         break;
       case "percentage":
         State.percentage = true;
