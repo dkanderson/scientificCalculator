@@ -145,7 +145,11 @@ import { toggleActive, subExprLength } from "./helpers/utility.js";
           const pos = subExprLength(State.expression); // calculate offset position in the array to insert bracket and neg symbol
           console.log(pos);
 
-          State.expression.splice(pos.index + 1, 0, ...["(", "-"]); // surround last operand with parenthesis and a negative symbol (front)
+          State.expression.splice(
+            pos.index > 0 ? pos.index + 1 : 0,
+            0,
+            ...["(", "-"]
+          ); // surround last operand with parenthesis and a negative symbol (front)
           State.expression.push(")"); // (back)
           updateScreen(State.expression.join("")); // update screen with the changes
           State.negativeFlag = true; // set the negative flag to true (a number has been negated)
@@ -154,7 +158,7 @@ import { toggleActive, subExprLength } from "./helpers/utility.js";
           const pos = subExprLength(State.expression); // calculate the offset position of the parenthesis for removal
           State.cache.shift(); // remove negative symbol from the cache
 
-          State.expression.splice(pos.index + 1, 2); // remove left bracket and neg from expression array
+          State.expression.splice(pos.index > 0 ? pos.index + 1 : 0, 2); // remove left bracket and neg from expression array
           State.expression.pop(); // remove right bracket from expression array
           updateScreen(State.expression.join("")); // update screen with changes
           State.negativeFlag = false; // set the negative flag to false
