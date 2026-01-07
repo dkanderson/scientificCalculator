@@ -9,6 +9,8 @@ import { toggleActive, subExprLength } from "./helpers/utility.js";
   const calculator = document.getElementById("scientific-calculator");
   const simpleToggle = document.getElementById("simple-toggle");
   const buttons = calculator.querySelectorAll("button");
+  const body = document.querySelector("body");
+  const darkToggle = document.getElementById("dark-toggle");
 
   const State = {
     cache: [],
@@ -39,6 +41,10 @@ import { toggleActive, subExprLength } from "./helpers/utility.js";
     expCache: [],
     specialFunction: { active: false, type: null, index: 0 },
   };
+
+  darkToggle.addEventListener("click", function () {
+    body.classList.toggle("dark");
+  });
 
   simpleToggle.addEventListener("click", function () {
     // toggle simple/scientific calculator
@@ -140,10 +146,11 @@ import { toggleActive, subExprLength } from "./helpers/utility.js";
         yxrtButton.classList.remove("active");
         break;
       case "pos-neg":
+        if (!State.expression.length) return;
+
         if (State.expression.length && !State.negativeFlag) {
           // --if there is an expression and no negative flag has been set
           const pos = subExprLength(State.expression); // calculate offset position in the array to insert bracket and neg symbol
-          console.log(pos);
 
           State.expression.splice(
             pos.index > 0 ? pos.index + 1 : 0,
@@ -174,8 +181,6 @@ import { toggleActive, subExprLength } from "./helpers/utility.js";
           State.expression.push("0");
         }
 
-        State.cache = []; // reset the cache
-        State.operator.push("%");
         State.expression.push("%");
         updateScreen(State.expression.join(""));
 
