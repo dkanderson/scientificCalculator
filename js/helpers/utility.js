@@ -15,6 +15,9 @@ export function subExprLength(exp) {
     sub++;
 
     if (["&divide;", "&times;", "&minus;", "&#43;", "%"].includes(token)) {
+      if (token === "%" && !exp[i + 1]) {
+        continue;
+      }
       last = token;
       break;
     }
