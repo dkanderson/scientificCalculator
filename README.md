@@ -30,6 +30,7 @@ project-folder/
 │ └── calculate.js
 │ └── handle_keypress.js
 │ └── handleSpecial.js
+│ └── utility.js
 └── README.md
 ```
 
@@ -48,7 +49,7 @@ project-folder/
 
 - ~~Add scientific functions (sin, cos, tan, log, rad, etc)~~
 - Improved mobile layout
-- Dark/light theme toggle
+- ~~Dark/light theme toggle~~
 - Better Keyboard support
 - ~~Add calculator icon to button for expanding calculator~~
 - ~~Use Shunting yard, tokens and RPN to improve logic~~
